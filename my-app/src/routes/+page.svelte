@@ -24,7 +24,8 @@
         input=''
     }
 </script>
-<input type="text" class="input" onkeypress={itemsToList} contenteditable="true" bind:value={input}>
+<div class="grid grid-cols-1 w-1/2 mx-auto">
+<input type="text" class="input mt-10 place-self-center" onkeypress={itemsToList} contenteditable="true" bind:value={input}>
 <ol class="list">
     {#each list as item (item.id)}
     <li class="list-row">
@@ -32,3 +33,4 @@
     </li>
     {/each}
 </ol>
+</div>
