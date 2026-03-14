@@ -1,6 +1,7 @@
 <script lang="ts">
     interface Item {
         id: string;
+        text: string;
         checked: boolean;
     }
     
@@ -19,7 +20,7 @@
         e.preventDefault()
         if (!input.trim()) return
         
-        list.unshift({id: input, checked: false})
+        list.unshift({id: crypto.randomUUID(), text: input.trim(), checked: false})
         input=''
     }
 </script>
@@ -27,7 +28,7 @@
 <ol class="list">
     {#each list as item (item.id)}
     <li class="list-row">
-        <input type="checkbox" class="checkbox" onclick={() => check(item)}><p class="{item.checked ? 'line-through': ''}">{item.id}</p>
+        <input type="checkbox" class="checkbox" onclick={() => check(item)}><p class="{item.checked ? 'line-through': ''}">{item.text}</p>
     </li>
     {/each}
 </ol>
