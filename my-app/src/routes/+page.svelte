@@ -65,7 +65,7 @@
 <div class="flex justify-end mt-5 mr-5">
     <Dialog.Root>
         <DialogTrigger type="button">
-            <Button>Sign Up!</Button>
+            Sign Up!
         </DialogTrigger>
         <DialogContent>
             <form>
