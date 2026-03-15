@@ -10,6 +10,7 @@
     import { Label } from "$lib/components/ui/label/index.js";
     
     let value = $state(today(getLocalTimeZone()))
+    let list = $state<Item[]>([])
     
     interface Item {
         id: string;
@@ -18,13 +19,29 @@
         date: CalendarDate;
     }
     
+    $effect(() => {
+        list.sort((a, b) => {
+            if (a.checked !== b.checked) {
+                return Number(a.checked) - Number(b.checked)
+            }
+            
+            if (a.checked) {
+                if (a.date > b.date) return -1;
+                if (a.date < b.date) return 1;
+            } else {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+            }
+
+            return 0;
+        })
+    })
+    
     let input = $state('')
-    let list = $state<Item[]>([])
     
     function check(item: Item) {
         item.checked = !item.checked
         list = list;
-        list.sort((a, b) => Number(a.checked) - Number(b.checked))
     }
     
     function itemsToList(e: KeyboardEvent) {
