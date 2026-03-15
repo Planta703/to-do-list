@@ -63,7 +63,17 @@
             <Checkbox id={item.id} onclick={() => check(item)} />
                 <Label for={item.id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
-            <Label class="place-self-end">{item.date}</Label>
+            <DropdownMenu.Root>
+                <DropdownMenuTrigger class="place-self-end">{item.date}</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <Calendar
+                    type="single"
+                    bind:value={item.date}
+                    class="rounded-md border shadow-sm"
+                    captionLayout="dropdown"
+                    />
+                </DropdownMenuContent>
+            </DropdownMenu.Root>
         </div>
         {/each}
     </div>
