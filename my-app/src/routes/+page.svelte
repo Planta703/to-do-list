@@ -8,6 +8,13 @@
     import { Calendar } from "$lib/components/ui/calendar/index.js";
     import { Checkbox } from "$lib/components/ui/checkbox/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
+    import * as Dialog from "$lib/components/ui/dialog/index.js";
+    import DialogTrigger from "@/components/ui/dialog/dialog-trigger.svelte";
+    import DialogContent from "@/components/ui/dialog/dialog-content.svelte";
+    import * as Field from "$lib/components/ui/field/index.js";
+    import Button from "@/components/ui/button/button.svelte";
+    import FieldLabel from "@/components/ui/field/field-label.svelte";
+    import Input from "@/components/ui/input/input.svelte";
     
     let value = $state(today(getLocalTimeZone()))
     let list = $state<Item[]>([])
@@ -32,7 +39,7 @@
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
             }
-
+            
             return 0;
         })
     })
@@ -55,6 +62,31 @@
         value=today(getLocalTimeZone())
     }
 </script>
+<div class="flex justify-end mt-5 mr-5">
+    <Dialog.Root>
+        <DialogTrigger type="button">
+            <Button>Sign Up!</Button>
+        </DialogTrigger>
+        <DialogContent>
+            <form>
+                <Field.Group>
+                    <Field.Field>
+                        <Field.Label>
+                            Username
+                        </Field.Label>
+                        <Input />
+                    </Field.Field>
+                    <Field.Field>
+                        <Field.Label>
+                            Password
+                        </Field.Label>
+                        <Input />
+                    </Field.Field>
+                </Field.Group>
+            </form>
+        </DialogContent>
+    </Dialog.Root>
+</div>
 <div class="grid grid-cols-1 w-1/2 mx-auto">
     <InputGroup.Root class="mt-10">
         <InputGroup.Input onkeypress={itemsToList} contenteditable="true" bind:value={input} />
