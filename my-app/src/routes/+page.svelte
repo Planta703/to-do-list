@@ -13,8 +13,8 @@
     import DialogContent from "@/components/ui/dialog/dialog-content.svelte";
     import * as Field from "$lib/components/ui/field/index.js";
     import Button from "@/components/ui/button/button.svelte";
-    import FieldLabel from "@/components/ui/field/field-label.svelte";
     import Input from "@/components/ui/input/input.svelte";
+    import { signIn } from "@auth/sveltekit/client";
     
     let value = $state(today(getLocalTimeZone()))
     let list = $state<Item[]>([])
@@ -82,8 +82,12 @@
                         </Field.Label>
                         <Input />
                     </Field.Field>
+                    <Button type="submit">
+                        Sign In
+                    </Button>
                 </Field.Group>
             </form>
+            <Button class="bg-red-400" onclick={() => signIn()}>Google</Button>
         </DialogContent>
     </Dialog.Root>
 </div>
