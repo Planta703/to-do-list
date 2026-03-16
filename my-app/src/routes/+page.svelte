@@ -87,7 +87,7 @@
                     </Button>
                 </Field.Group>
             </form>
-            <Button class="bg-red-400" onclick={() => signIn()}>Google</Button>
+            <Button class="bg-red-400 hover:bg-red-500" onclick={() => signIn()}>Google</Button>
         </DialogContent>
     </Dialog.Root>
 </div>
