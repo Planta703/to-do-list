@@ -14,7 +14,6 @@
     import * as Field from "$lib/components/ui/field/index.js";
     import Button from "@/components/ui/button/button.svelte";
     import Input from "@/components/ui/input/input.svelte";
-    import { signIn } from "@auth/sveltekit/client";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
     
@@ -136,7 +135,6 @@
                     </Button>
                 </Field.Group>
             </form>
-            <Button class="bg-red-400 hover:bg-red-500" onclick={() => signIn()}>Google</Button>
         </DialogContent>
     </Dialog.Root>
 </div>
