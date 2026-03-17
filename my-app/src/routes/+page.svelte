@@ -27,7 +27,9 @@
     
     let value = $state(today(getLocalTimeZone()));
     let list = $state<Item[]>([]); // keep the list as reactive state
-    let input = $state("");
+    let input = $state('');
+    let email = $state('');
+    let password = $state('');
     
     async function loadItems() {
         const { data, error } = await supabase.from("Items").select("*");
@@ -65,7 +67,7 @@
         });
     });
     
-    async function acheck(item: any) {
+    async function check(item: any) {
         item.checked = !item.checked
         const { error } = await supabase
         .from('Items')
@@ -74,6 +76,13 @@
         .select();          // Optional: returns updated row(s)
         
         if (error) throw error;
+    }
+    
+    async function signUp() {
+        await supabase.auth.signUp({
+            email: email,
+            password: password,
+        })
     }
     
     $effect(() => {
@@ -120,18 +129,18 @@
                 <Field.Group>
                     <Field.Field>
                         <Field.Label>
-                            Username
+                            Email
                         </Field.Label>
-                        <Input />
+                        <Input bind:value={email} type="email" />
                     </Field.Field>
                     <Field.Field>
                         <Field.Label>
                             Password
                         </Field.Label>
-                        <Input />
+                        <Input bind:value={password} type="password" />
                     </Field.Field>
-                    <Button type="submit">
-                        Sign In
+                    <Button type="submit" onclick={() => signUp()}>
+                        Sign Up
                     </Button>
                 </Field.Group>
             </form>
@@ -160,7 +169,7 @@
     {#each list as item}
     <div class="flex justify-between mt-5">
         <div class="flex gap-2 place-items-center">
-            <Checkbox id={item.item_id}  onCheckedChange={() => acheck(item)} bind:checked={item.checked} />
+            <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
             <DropdownMenu.Root>
