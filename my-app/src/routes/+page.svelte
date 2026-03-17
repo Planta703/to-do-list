@@ -17,12 +17,68 @@
     import { signIn } from "@auth/sveltekit/client";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
+    import { supabase } from "$lib/supabaseClient.js";
+    import { onMount, onDestroy } from "svelte";
     
+    type Item = {
+        item_id: string;
+        user_id: string;
     type Item = {
         item_id: string;
         user_id: string;
         text: string;
         checked: boolean;
+        date: string;
+    };
+    
+    let value = $state(today(getLocalTimeZone()));
+    let list = $state<Item[]>([]); // keep the list as reactive state
+    let input = $state("");
+    
+    async function loadItems() {
+        const { data, error } = await supabase.from("Items").select("*");
+        if (error) throw error;
+        list = data ?? [];
+    }
+    
+    onMount(() => {
+        loadItems();
+        
+        const subscription = supabase
+        .channel("public:Items")
+        .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Items" },
+        (payload) => {
+            const row = (payload.new ?? payload.old) as Item | null;
+            if (!row) return;
+            
+            if (payload.eventType === "INSERT") {
+                list = [...list, row];
+            } else if (payload.eventType === "UPDATE") {
+                list = list.map((item) =>
+                item.item_id === row.item_id ? row : item
+                );
+            } else if (payload.eventType === "DELETE") {
+                list = list.filter((item) => item.item_id !== row.item_id);
+            }
+        }
+        )
+        .subscribe();
+        
+        onDestroy(() => {
+            supabase.removeChannel(subscription);
+        });
+    });
+    
+    async function acheck(item: any) {
+        const { error } = await supabase
+        .from('Items')
+        .update({ 'checked': !item.checked })
+        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
+        .select();          // Optional: returns updated row(s)
+        
+        if (error) throw error;
         date: string;
     };
     
@@ -95,6 +151,7 @@
     })
     
     async function itemsToList(e: KeyboardEvent) {
+    async function itemsToList(e: KeyboardEvent) {
         if (e.key !== 'Enter') return
         
         e.preventDefault()
@@ -104,8 +161,14 @@
         .from('Items')
         .insert({'user_id': crypto.randomUUID(), 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
         .select()
+        const {error} = await supabase
+        .from('Items')
+        .insert({'user_id': crypto.randomUUID(), 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
+        .select()
         input=''
         value=today(getLocalTimeZone())
+        
+        if (error) throw error
         
         if (error) throw error
     }
@@ -159,7 +222,11 @@
         </InputGroupAddon>
     </InputGroup.Root>
     {#each list as item}
+    {#each list as item}
     <div class="flex justify-between mt-5">
+        <div class="flex gap-2 place-items-center">
+            <Checkbox id={item.item_id} onCheckedChange={() => acheck(item)} />
+                <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
         <div class="flex gap-2 place-items-center">
             <Checkbox id={item.item_id} onCheckedChange={() => acheck(item)} />
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
