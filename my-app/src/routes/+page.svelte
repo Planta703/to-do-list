@@ -33,12 +33,13 @@
     let currentUserId = $state('');
     
     supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN') userId
+        if (event === 'SIGNED_IN') userId()
     })
     
     onMount(() => {
         loadItems();
-        
+        userId()
+
         const subscription = supabase
         .channel("public:Items")
         .on(
@@ -90,8 +91,8 @@
         if (error) throw error;
     }
     
-    async function signUp() {
-        await supabase.auth.signUp({
+    async function signIn() {
+        await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
@@ -120,6 +121,8 @@
         
         e.preventDefault()
         if (!input.trim()) return
+
+        console.log(currentUserId)
         
         const {error} = await supabase
         .from('Items')
@@ -134,7 +137,7 @@
 <div class="flex justify-end mt-5 mr-5">
     <Dialog.Root>
         <DialogTrigger type="button">
-            Sign Up!
+            Sign In!
         </DialogTrigger>
         <DialogContent>
             <form>
@@ -151,8 +154,8 @@
                         </Field.Label>
                         <Input bind:value={password} type="password" />
                     </Field.Field>
-                    <Button type="submit" onclick={() => signUp()}>
-                        Sign Up
+                    <Button type="submit" onclick={() => signIn()}>
+                        Sign In
                     </Button>
                 </Field.Group>
             </form>
