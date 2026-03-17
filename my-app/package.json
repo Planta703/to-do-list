@@ -46,6 +46,7 @@
 	},
 	"dependencies": {
 		"@auth/sveltekit": "^1.11.1",
+		"@supabase/supabase-js": "^2.99.2",
 		"daisyui": "^5.5.19"
 	}
 }

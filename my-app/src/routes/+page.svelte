@@ -4,7 +4,7 @@
     import DropdownMenuContent from "@/components/ui/dropdown-menu/dropdown-menu-content.svelte";
     import DropdownMenuTrigger from "@/components/ui/dropdown-menu/dropdown-menu-trigger.svelte";
     import InputGroupAddon from "@/components/ui/input-group/input-group-addon.svelte";
-    import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
+    import { getLocalTimeZone, today } from "@internationalized/date";
     import { Calendar } from "$lib/components/ui/calendar/index.js";
     import { Checkbox } from "$lib/components/ui/checkbox/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
@@ -15,15 +15,65 @@
     import Button from "@/components/ui/button/button.svelte";
     import Input from "@/components/ui/input/input.svelte";
     import { signIn } from "@auth/sveltekit/client";
+    import { supabase } from "$lib/supabaseClient.js";
+    import { onMount, onDestroy } from "svelte";
     
-    let value = $state(today(getLocalTimeZone()))
-    let list = $state<Item[]>([])
-    
-    interface Item {
-        id: string;
+    type Item = {
+        item_id: string;
+        user_id: string;
         text: string;
         checked: boolean;
-        date: CalendarDate;
+        date: string;
+    };
+    
+    let value = $state(today(getLocalTimeZone()));
+    let list = $state<Item[]>([]); // keep the list as reactive state
+    let input = $state("");
+    
+    async function loadItems() {
+        const { data, error } = await supabase.from("Items").select("*");
+        if (error) throw error;
+        list = data ?? [];
+    }
+    
+    onMount(() => {
+        loadItems();
+        
+        const subscription = supabase
+        .channel("public:Items")
+        .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Items" },
+        (payload) => {
+            const row = (payload.new ?? payload.old) as Item | null;
+            if (!row) return;
+            
+            if (payload.eventType === "INSERT") {
+                list = [...list, row];
+            } else if (payload.eventType === "UPDATE") {
+                list = list.map((item) =>
+                item.item_id === row.item_id ? row : item
+                );
+            } else if (payload.eventType === "DELETE") {
+                list = list.filter((item) => item.item_id !== row.item_id);
+            }
+        }
+        )
+        .subscribe();
+        
+        onDestroy(() => {
+            supabase.removeChannel(subscription);
+        });
+    });
+    
+    async function acheck(item: any) {
+        const { error } = await supabase
+        .from('Items')
+        .update({ 'checked': !item.checked })
+        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
+        .select();          // Optional: returns updated row(s)
+        
+        if (error) throw error;
     }
     
     $effect(() => {
@@ -44,22 +94,20 @@
         })
     })
     
-    let input = $state('')
-    
-    function check(item: Item) {
-        item.checked = !item.checked
-        list = list;
-    }
-    
-    function itemsToList(e: KeyboardEvent) {
+    async function itemsToList(e: KeyboardEvent) {
         if (e.key !== 'Enter') return
         
         e.preventDefault()
         if (!input.trim()) return
         
-        list.unshift({id: crypto.randomUUID(), text: input.trim(), checked: false, date: value})
+        const {error} = await supabase
+        .from('Items')
+        .insert({'user_id': crypto.randomUUID(), 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
+        .select()
         input=''
         value=today(getLocalTimeZone())
+        
+        if (error) throw error
     }
 </script>
 <div class="flex justify-end mt-5 mr-5">
@@ -110,18 +158,18 @@
             </DropdownMenu.Root>
         </InputGroupAddon>
     </InputGroup.Root>
-    {#each list as item (item.id)}
+    {#each list as item}
     <div class="flex justify-between mt-5">
-        <div class="flex gap-2">
-            <Checkbox id={item.id} onclick={() => check(item)} />
-                <Label for={item.id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
+        <div class="flex gap-2 place-items-center">
+            <Checkbox id={item.item_id} onCheckedChange={() => acheck(item)} />
+                <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
             <DropdownMenu.Root>
                 <DropdownMenuTrigger class="place-self-end">{item.date}</DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <Calendar
                     type="single"
-                    bind:value={item.date}
+                    bind:value={item.   date}
                     class="rounded-md border shadow-sm"
                     captionLayout="dropdown"
                     />
