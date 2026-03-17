@@ -30,12 +30,11 @@
     let input = $state('');
     let email = $state('');
     let password = $state('');
+    let currentUserId = $state('');
     
-    async function loadItems() {
-        const { data, error } = await supabase.from("Items").select("*");
-        if (error) throw error;
-        list = data ?? [];
-    }
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN') userId
+    })
     
     onMount(() => {
         loadItems();
@@ -66,6 +65,19 @@
             supabase.removeChannel(subscription);
         });
     });
+    
+    async function loadItems() {
+        const { data, error } = await supabase.from("Items").select("*");
+        if (error) throw error;
+        list = data ?? [];
+    }
+    
+    async function userId() {
+        const { data } = await supabase.auth.getUser();
+        if (data.user) {
+            currentUserId = data.user.id;
+        }
+    }
     
     async function check(item: any) {
         item.checked = !item.checked
@@ -111,7 +123,7 @@
         
         const {error} = await supabase
         .from('Items')
-        .insert({'user_id': crypto.randomUUID(), 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
+        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
         .select()
         input=''
         value=today(getLocalTimeZone())
