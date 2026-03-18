@@ -4,9 +4,8 @@
     import DropdownMenuContent from "@/components/ui/dropdown-menu/dropdown-menu-content.svelte";
     import DropdownMenuTrigger from "@/components/ui/dropdown-menu/dropdown-menu-trigger.svelte";
     import InputGroupAddon from "@/components/ui/input-group/input-group-addon.svelte";
-    import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
+    import { getLocalTimeZone, today } from "@internationalized/date";
     import { Calendar } from "$lib/components/ui/calendar/index.js";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import DialogTrigger from "@/components/ui/dialog/dialog-trigger.svelte";
@@ -16,7 +15,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
+    import { CalendarPlus } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     
@@ -84,22 +83,6 @@
         if (data.user) {
             currentUserId = data.user.id;
         }
-    }
-    
-    async function check(item: Item) {
-        await supabase
-        .from('Items')
-        .update({ 'checked': item.checked })
-        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
-        .select();          // Optional: returns updated row(s)
-    }
-    
-    async function deleteItem(item: Item) {
-        await supabase
-        .from('Items')
-        .update({ 'deleted': true })
-        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
-        .select();          // Optional: returns updated row(s)
     }
     
     async function signIn() {
@@ -201,29 +184,11 @@
     {#each list as item (item.item_id)}
     <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">
-            <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
-                <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
-            </div>
-            <div class="flex gap-5 items-center">
-                <DropdownMenu.Root>
-                    <DropdownMenuTrigger class="flex items-center gap-1">
-                        {item.date}
-                        <ChevronDown color="black" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <Calendar
-                        type="single"
-                        value={parseDate(item.date)}
-                        onValueChange={(newVal) => {
-                            if (newVal) item.date = newVal.toString();
-                        }}
-                        class="rounded-md border shadow-sm"
-                        captionLayout="dropdown"
-                        />
-                    </DropdownMenuContent>
-                </DropdownMenu.Root>
-                <Trash2 size=20 onclick={() => deleteItem(item)} />
-                </div>
-            </div>
-            {/each}
+            <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
         </div>
+        <div class="flex gap-5 items-center">
+            {item.date}
+        </div>
+    </div>
+    {/each}
+</div>

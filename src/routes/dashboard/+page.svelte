@@ -31,7 +31,7 @@
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_OUT') window.location.href = '/'
     })
-
+    
     async function accountPresent() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
@@ -40,8 +40,8 @@
     }
     
     onMount(() => {
-        loadItems();
         accountPresent()
+        loadItems();
         
         const subscription = supabase
         .channel("public:Items")
