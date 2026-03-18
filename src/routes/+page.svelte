@@ -176,7 +176,6 @@
             Sign In!
         </DialogTrigger>
         <DialogContent>
-        {#if !email_sent}
             <form>
                 <Field.Group>
                     <Field.Field>
