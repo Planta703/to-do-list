@@ -189,7 +189,7 @@
             </DropdownMenu.Root>
         </InputGroupAddon>
     </InputGroup.Root>
-    {#each list as item}
+    {#each list as item (item.item_id)}
     <div class="flex justify-between mt-5">
         <div class="flex gap-2 place-items-center">
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
