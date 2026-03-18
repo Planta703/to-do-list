@@ -29,11 +29,19 @@
     let input = $state('');
     
     supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_OUT') loadItems()
+        if (event === 'SIGNED_OUT') window.location.href = '/'
     })
+
+    async function accountPresent() {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+            window.location.href = '/'
+        }
+    }
     
     onMount(() => {
         loadItems();
+        accountPresent()
         
         const subscription = supabase
         .channel("public:Items")
@@ -87,7 +95,6 @@
     
     async function signOut() {
         await supabase.auth.signOut({ scope: 'local' })
-        window.close()
     }
     
     $effect(() => {
@@ -117,7 +124,7 @@
         
         const {error} = await supabase
         .from('Items')
-        .insert({'item_id': crypto.randomUUID(), 'text': input.trim(), 'date': value.toString().split('T')[0]})
+        .insert({'text': input.trim(), 'date': value.toString().split('T')[0]})
         .select()
         input=''
         value=today(getLocalTimeZone())
