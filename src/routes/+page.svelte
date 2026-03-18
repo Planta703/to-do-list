@@ -178,18 +178,20 @@
             <form>
                 <Field.Group>
                     <Field.Field>
-                        <Field.Label>
+                        <Field.Label for="email">
                             Email
                         </Field.Label>
-                        <Input bind:value={email} oninput={() => error_message = ''} type="email" />
+                        <Input id="email" bind:value={email} oninput={() => error_message = ''} type="email" autocomplete="on" />
                     </Field.Field>
                     <Field.Field>
-                        <Field.Label>
+                        <Field.Label for="password">
                             Password
                         </Field.Label>
-                        <Input bind:value={password} onclick={() => error_message = ''} type="password" />
+                        <Input id="password" bind:value={password} onclick={() => error_message = ''} type="password" autocomplete="on" />
                     </Field.Field>
+                    {#if error_message}
                     <p class="text-red-500 inline-flex justify-center text-sm">{error_message}</p>
+                    {/if}
                     {#if signin}
                     <Button type="button" onclick={() => signIn()}>
                         Sign In
@@ -202,7 +204,7 @@
                 </Field.Group>
             </form>
             <button class="flex place-self-center" onclick={() => signin = !signin}>
-                <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Login"}</p>
+                <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Have an account?"}</p>
             </button>
         </DialogContent>
     </Dialog.Root>
@@ -212,8 +214,9 @@
 </div>
 <div class="grid grid-cols-1 w-1/2 mx-auto">
     <h6 class="text-7xl font-chewy">Community</h6>
+    {#if currentUserId}
     <InputGroup.Root class="mt-10 h-15">
-        <InputGroup.Input class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
+        <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
         <InputGroupAddon align="inline-end">
             <DropdownMenu.Root>
                 <DropdownMenuTrigger>
@@ -230,6 +233,9 @@
             </DropdownMenu.Root>
         </InputGroupAddon>
     </InputGroup.Root>
+    {:else}
+<h6 class="text-2xl">Please Sign In to Participate</h6>
+    {/if}
     {#each list as item (item.item_id)}
     <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">

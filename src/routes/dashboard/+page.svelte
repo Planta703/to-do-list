@@ -153,7 +153,7 @@
 <div class="grid grid-cols-1 w-1/2 mx-auto">
     <h6 class="text-7xl font-chewy">Dashboard</h6>
     <InputGroup.Root class="mt-10 h-15">
-        <InputGroup.Input class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
+        <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
         <InputGroupAddon align="inline-end">
             <DropdownMenu.Root>
                 <DropdownMenuTrigger>
