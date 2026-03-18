@@ -29,8 +29,16 @@
     let input = $state('');
     
     supabase.auth.onAuthStateChange((event) => {
+        if (event === 'INITIAL_SESSION') accountPresent()
         if (event === 'SIGNED_OUT') loadItems()
     })
+
+    async function accountPresent() {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            window.close()
+        }
+    }
     
     onMount(() => {
         loadItems();
@@ -117,7 +125,7 @@
         
         const {error} = await supabase
         .from('Items')
-        .insert({'item_id': crypto.randomUUID(), 'text': input.trim(), 'date': value.toString().split('T')[0]})
+        .insert({'text': input.trim(), 'date': value.toString().split('T')[0]})
         .select()
         input=''
         value=today(getLocalTimeZone())
