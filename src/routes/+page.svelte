@@ -27,7 +27,7 @@
         date: string;
         deleted: boolean;
     };
-
+    
     type User ={
         user_id: string;
         type: string;
@@ -41,6 +41,8 @@
     let currentUserId = $state('');
     let dashboard = $state(false)
     let users = $state<User[]>([])
+    let signin = $state(true)
+    let error_message = $state('')
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId()
@@ -82,10 +84,10 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*").eq("deleted", false)
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false);
         list = data ?? [];
     }
-
+    
     async function loadUsers() {
         const { data } = await supabase.from("users").select("*").eq("type", "dashboard");
         users = data ?? [];
@@ -102,10 +104,23 @@
     }
     
     async function signIn() {
-        await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
+        if (error) {
+            error_message = error.message 
+        }
+    }
+    
+    async function signUp() {
+        const { error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+        })
+        if (error) {
+            error_message = error.message
+        }
     }
     
     async function signOut() {
@@ -166,19 +181,29 @@
                         <Field.Label>
                             Email
                         </Field.Label>
-                        <Input bind:value={email} type="email" />
+                        <Input bind:value={email} oninput={() => error_message = ''} type="email" />
                     </Field.Field>
                     <Field.Field>
                         <Field.Label>
                             Password
                         </Field.Label>
-                        <Input bind:value={password} type="password" />
+                        <Input bind:value={password} onclick={() => error_message = ''} type="password" />
                     </Field.Field>
+                    <p class="text-red-500 inline-flex justify-center text-sm">{error_message}</p>
+                    {#if signin}
                     <Button type="button" onclick={() => signIn()}>
                         Sign In
                     </Button>
+                    {:else}
+                    <Button type="button" onclick={() => signUp()}>
+                        Sign Up
+                    </Button>
+                    {/if}
                 </Field.Group>
             </form>
+            <button class="flex" onclick={() => signin = !signin}>
+                <p class="hover:cursor-pointer">Don't have an account?</p>
+            </button>
         </DialogContent>
     </Dialog.Root>
     {:else}
