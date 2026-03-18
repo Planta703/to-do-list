@@ -6,7 +6,6 @@
     import InputGroupAddon from "@/components/ui/input-group/input-group-addon.svelte";
     import { getLocalTimeZone, today } from "@internationalized/date";
     import { Calendar } from "$lib/components/ui/calendar/index.js";
-    import { Label } from "$lib/components/ui/label/index.js";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import DialogTrigger from "@/components/ui/dialog/dialog-trigger.svelte";
     import DialogContent from "@/components/ui/dialog/dialog-content.svelte";
@@ -48,9 +47,9 @@
         if (event === 'SIGNED_OUT') currentUserId = ''; loadItems(); dashboard = false
     })
     
-    onMount(() => {
+    onMount(async() => {
         loadItems();
-        loadUsers();
+        await loadUsers();
         userId()
         
         const subscription = supabase
@@ -209,7 +208,7 @@
     {#each list as item (item.item_id)}
     <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">
-            <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
+            <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
         </div>
         <div class="flex gap-5 items-center">
             {item.date}
