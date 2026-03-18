@@ -87,6 +87,14 @@
         .eq('item_id', item.item_id)  // ← Add this: filter by primary key
         .select();          // Optional: returns updated row(s)
     }
+
+    async function deleteItem(item: any) {
+        await supabase
+        .from('Items')
+        .update({ 'deleted': true })
+        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
+        .select();          // Optional: returns updated row(s)
+    }
     
     async function signIn() {
         await supabase.auth.signInWithPassword({
@@ -190,9 +198,9 @@
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
-            <div class="grid grid-cols-2">
+            <div class="flex gap-5 items-center">
                 <DropdownMenu.Root>
-                    <DropdownMenuTrigger class="place-self-end grid grid-cols-2">
+                    <DropdownMenuTrigger class="flex items-center gap-1">
                         {item.date}
                         <ChevronDown color="black" />
                     </DropdownMenuTrigger>
@@ -208,7 +216,7 @@
                         />
                     </DropdownMenuContent>
                 </DropdownMenu.Root>
-                <Trash2 />
+                <Trash2 size=20 onclick={() => deleteItem(item)} />
             </div>
         </div>
         {/each}
