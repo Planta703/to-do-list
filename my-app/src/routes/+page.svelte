@@ -16,7 +16,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, ChevronDown } from "@lucide/svelte"
+    import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     
     type Item = {
@@ -42,7 +42,7 @@
     onMount(() => {
         loadItems();
         userId()
-
+        
         const subscription = supabase
         .channel("public:Items")
         .on(
@@ -58,8 +58,6 @@
                 list = list.map((item) =>
                 item.item_id === row.item_id ? row : item
                 );
-            } else if (payload.eventType === "DELETE") {
-                list = list.filter((item) => item.item_id !== row.item_id);
             }
         }
         )
@@ -83,14 +81,11 @@
     }
     
     async function check(item: any) {
-        item.checked = !item.checked
-        const { error } = await supabase
+        await supabase
         .from('Items')
-        .update({ 'checked': !item.checked })
+        .update({ 'checked': item.checked })
         .eq('item_id', item.item_id)  // ← Add this: filter by primary key
         .select();          // Optional: returns updated row(s)
-        
-        if (error) throw error;
     }
     
     async function signIn() {
@@ -99,7 +94,7 @@
             password: password,
         })
     }
-
+    
     async function signOut() {
         await supabase.auth.signOut({ scope: 'local' })
     }
@@ -139,7 +134,7 @@
     }
 </script>
 <div class="flex justify-end mt-5 mr-5">
-{#if !currentUserId}
+    {#if !currentUserId}
     <Dialog.Root>
         <DialogTrigger class={buttonVariants({ variant: "default" })} type="button">
             Sign In!
@@ -176,7 +171,7 @@
         <InputGroupAddon align="inline-end">
             <DropdownMenu.Root>
                 <DropdownMenuTrigger>
-                <CalendarPlus color="black" />
+                    <CalendarPlus color="black" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <Calendar
@@ -195,23 +190,26 @@
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
-            <DropdownMenu.Root>
-                <DropdownMenuTrigger class="place-self-end grid grid-cols-2">
-                    {item.date}
-                    <ChevronDown color="black" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <Calendar
-                    type="single"
-                    value={parseDate(item.date)}
-                    onValueChange={(newVal) => {
-                        if (newVal) item.date = newVal.toString();
-                    }}
-                    class="rounded-md border shadow-sm"
-                    captionLayout="dropdown"
-                    />
-                </DropdownMenuContent>
-            </DropdownMenu.Root>
+            <div class="grid grid-cols-2">
+                <DropdownMenu.Root>
+                    <DropdownMenuTrigger class="place-self-end grid grid-cols-2">
+                        {item.date}
+                        <ChevronDown color="black" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <Calendar
+                        type="single"
+                        value={parseDate(item.date)}
+                        onValueChange={(newVal) => {
+                            if (newVal) item.date = newVal.toString();
+                        }}
+                        class="rounded-md border shadow-sm"
+                        captionLayout="dropdown"
+                        />
+                    </DropdownMenuContent>
+                </DropdownMenu.Root>
+                <Trash2 />
+            </div>
         </div>
         {/each}
     </div>
