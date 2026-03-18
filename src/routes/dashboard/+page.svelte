@@ -85,6 +85,14 @@
         .select();          // Optional: returns updated row(s)
     }
     
+    async function updateDate(item: Item) {
+        await supabase
+        .from('Items')
+        .update({ 'date': item.date })
+        .eq('item_id', item.item_id)
+        .select();
+    }
+    
     async function deleteItem(item: Item) {
         await supabase
         .from('Items')
@@ -98,7 +106,6 @@
     }
     
     $effect(() => {
-        loadItems()
         list.sort((a, b) => {
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
@@ -173,6 +180,7 @@
                         value={parseDate(item.date)}
                         onValueChange={(newVal) => {
                             if (newVal) item.date = newVal.toString();
+                            updateDate(item);
                         }}
                         class="rounded-md border shadow-sm"
                         captionLayout="dropdown"
