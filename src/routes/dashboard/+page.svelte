@@ -104,11 +104,10 @@
     }
     
     async function signIn() {
-        const { error } = await supabase.auth.signInWithPassword({
+        await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
-        console.error(error)
     }
     
     async function signOut() {
