@@ -18,6 +18,7 @@
     import { onMount, onDestroy } from "svelte";
     import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
+    import { cn } from "@/utils";
     
     type Item = {
         item_id: string;
@@ -179,6 +180,7 @@
     {/if}
 </div>
 <div class="grid grid-cols-1 w-1/2 mx-auto">
+    <h6 class="text-7xl font-chewy">Community</h6>
     <InputGroup.Root class="mt-10">
         <InputGroup.Input onkeypress={itemsToList} contenteditable="true" bind:value={input} />
         <InputGroupAddon align="inline-end">
@@ -201,7 +203,7 @@
     <div class="flex justify-between mt-5">
         <div class="flex gap-2 place-items-center">
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
-                <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
+                <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
             </div>
             <div class="flex gap-5 items-center">
                 <DropdownMenu.Root>
