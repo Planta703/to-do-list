@@ -48,9 +48,9 @@
         if (event === 'SIGNED_OUT') currentUserId = ''; loadItems(); dashboard = false
     })
     
-    onMount(() => {
+    onMount(async() => {
         loadItems();
-        loadUsers();
+        await loadUsers();
         userId()
         
         const subscription = supabase

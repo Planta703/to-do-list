@@ -13,6 +13,7 @@
     import { onMount, onDestroy } from "svelte";
     import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
     import { cn } from "@/utils";
+    import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     
     type Item = {
         item_id: string;
@@ -131,7 +132,7 @@
         
         const {error} = await supabase
         .from('Items')
-        .insert({'text': input.trim(), 'date': value.toString().split('T')[0]})
+        .insert({'text': input.trim(), 'date': value.toString().split('T')[0], 'dashboard': true})
         .select()
         input=''
         value=today(getLocalTimeZone())
@@ -139,6 +140,13 @@
         if (error) throw error
     }
 </script>
+<NavigationMenu.Root>
+    <NavigationMenu.List>
+        <NavigationMenu.Item>
+            <NavigationMenu.Link class="hover:cursor-pointer text-2xl" href="/">Community</NavigationMenu.Link>
+        </NavigationMenu.Item>
+    </NavigationMenu.List>
+</NavigationMenu.Root>
 <div class="flex justify-end mt-5 mr-5">
     <Button onclick={() => signOut()}>Sign Out</Button>
 </div>
