@@ -125,6 +125,7 @@
         const {error} = await supabase
         .from('Items')
         .insert({'text': input.trim(), 'date': value.toString().split('T')[0]})
+        .insert({'text': input.trim(), 'date': value.toString().split('T')[0]})
         .select()
         input=''
         value=today(getLocalTimeZone())
