@@ -18,6 +18,7 @@
     import { CalendarPlus } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
+    import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     
     type Item = {
         item_id: string;
@@ -27,6 +28,11 @@
         date: string;
         deleted: boolean;
     };
+
+    type User ={
+        user_id: string;
+        type: string;
+    }
     
     let value = $state(today(getLocalTimeZone()));
     let list = $state<Item[]>([]); // keep the list as reactive state
@@ -34,14 +40,17 @@
     let email = $state('');
     let password = $state('');
     let currentUserId = $state('');
+    let dashboard = $state(false)
+    let users = $state<User[]>([])
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId()
-        if (event === 'SIGNED_OUT') currentUserId = ''; loadItems()
+        if (event === 'SIGNED_OUT') currentUserId = ''; loadItems(); dashboard = false
     })
     
     onMount(() => {
         loadItems();
+        loadUsers();
         userId()
         
         const subscription = supabase
@@ -77,11 +86,19 @@
         const { data } = await supabase.from("Items").select("*").eq("deleted", false).eq("dashboard", false)
         list = data ?? [];
     }
+
+    async function loadUsers() {
+        const { data } = await supabase.from("users").select("*").eq("type", "dashboard");
+        users = data ?? [];
+    }
     
     async function userId() {
         const { data } = await supabase.auth.getUser();
         if (data.user) {
             currentUserId = data.user.id;
+            if (users.some(u => u.user_id === currentUserId)) {
+                dashboard = true
+            }
         }
     }
     
@@ -97,7 +114,6 @@
     }
     
     $effect(() => {
-        loadItems()
         list.sort((a, b) => {
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
@@ -129,6 +145,15 @@
         value=today(getLocalTimeZone())
     }
 </script>
+{#if dashboard}
+<NavigationMenu.Root>
+    <NavigationMenu.List>
+        <NavigationMenu.Item>
+            <NavigationMenu.Link class="hover:cursor-pointer text-2xl" href="/dashboard">Link</NavigationMenu.Link>
+        </NavigationMenu.Item>
+    </NavigationMenu.List>
+</NavigationMenu.Root>
+{/if}
 <div class="flex justify-end mt-5 mr-5">
     {#if !currentUserId}
     <Dialog.Root>
