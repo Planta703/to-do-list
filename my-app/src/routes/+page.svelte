@@ -25,6 +25,7 @@
         text: string;
         checked: boolean;
         date: string;
+        deleted: boolean;
     };
     
     let value = $state(today(getLocalTimeZone()));
@@ -55,9 +56,13 @@
             if (payload.eventType === "INSERT") {
                 list = [...list, row];
             } else if (payload.eventType === "UPDATE") {
-                list = list.map((item) =>
-                item.item_id === row.item_id ? row : item
-                );
+                if (row.deleted) {
+                    list = list.filter((item) => item.item_id !== row.item_id)
+                } else {
+                    list = list.map((item) =>
+                    item.item_id === row.item_id ? row : item
+                    );
+                }
             }
         }
         )
@@ -69,7 +74,7 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*");
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false);
         list = data ?? [];
     }
     
@@ -84,6 +89,14 @@
         await supabase
         .from('Items')
         .update({ 'checked': item.checked })
+        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
+        .select();          // Optional: returns updated row(s)
+    }
+    
+    async function deleteItem(item: any) {
+        await supabase
+        .from('Items')
+        .update({ 'deleted': true })
         .eq('item_id', item.item_id)  // ← Add this: filter by primary key
         .select();          // Optional: returns updated row(s)
     }
@@ -190,9 +203,9 @@
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
-            <div class="grid grid-cols-2">
+            <div class="flex gap-5 items-center">
                 <DropdownMenu.Root>
-                    <DropdownMenuTrigger class="place-self-end grid grid-cols-2">
+                    <DropdownMenuTrigger class="flex items-center gap-1">
                         {item.date}
                         <ChevronDown color="black" />
                     </DropdownMenuTrigger>
@@ -208,8 +221,8 @@
                         />
                     </DropdownMenuContent>
                 </DropdownMenu.Root>
-                <Trash2 />
+                <Trash2 size=20 onclick={() => deleteItem(item)} />
+                </div>
             </div>
+            {/each}
         </div>
-        {/each}
-    </div>
