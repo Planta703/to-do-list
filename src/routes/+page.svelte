@@ -138,14 +138,12 @@
         e.preventDefault()
         if (!input.trim()) return
         
-        const {error} = await supabase
+        await supabase
         .from('Items')
         .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
         .select()
         input=''
         value=today(getLocalTimeZone())
-        
-        if (error) throw error
     }
 </script>
 <div class="flex justify-end mt-5 mr-5">

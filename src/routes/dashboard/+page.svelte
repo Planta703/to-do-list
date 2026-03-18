@@ -8,16 +8,10 @@
     import { Calendar } from "$lib/components/ui/calendar/index.js";
     import { Checkbox } from "$lib/components/ui/checkbox/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
-    import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import DialogTrigger from "@/components/ui/dialog/dialog-trigger.svelte";
-    import DialogContent from "@/components/ui/dialog/dialog-content.svelte";
-    import * as Field from "$lib/components/ui/field/index.js";
     import Button from "@/components/ui/button/button.svelte";
-    import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
     import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
-    import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     
     type Item = {
@@ -33,18 +27,13 @@
     let value = $state(today(getLocalTimeZone()));
     let list = $state<Item[]>([]); // keep the list as reactive state
     let input = $state('');
-    let email = $state('');
-    let password = $state('');
-    let currentUserId = $state('');
     
     supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_IN') userId()
-        if (event === 'SIGNED_OUT') currentUserId = ''; loadItems()
+        if (event === 'SIGNED_OUT') loadItems()
     })
     
     onMount(() => {
         loadItems();
-        userId()
         
         const subscription = supabase
         .channel("public:Items")
@@ -80,13 +69,6 @@
         list = data ?? [];
     }
     
-    async function userId() {
-        const { data } = await supabase.auth.getUser();
-        if (data.user) {
-            currentUserId = data.user.id;
-        }
-    }
-    
     async function check(item: Item) {
         await supabase
         .from('Items')
@@ -103,15 +85,9 @@
         .select();          // Optional: returns updated row(s)
     }
     
-    async function signIn() {
-        await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
-    }
-    
     async function signOut() {
         await supabase.auth.signOut({ scope: 'local' })
+        window.close()
     }
     
     $effect(() => {
@@ -150,36 +126,7 @@
     }
 </script>
 <div class="flex justify-end mt-5 mr-5">
-    {#if !currentUserId}
-    <Dialog.Root>
-        <DialogTrigger class={buttonVariants({ variant: "default" })} type="button">
-            Sign In!
-        </DialogTrigger>
-        <DialogContent>
-            <form>
-                <Field.Group>
-                    <Field.Field>
-                        <Field.Label>
-                            Email
-                        </Field.Label>
-                        <Input bind:value={email} type="email" />
-                    </Field.Field>
-                    <Field.Field>
-                        <Field.Label>
-                            Password
-                        </Field.Label>
-                        <Input bind:value={password} type="password" />
-                    </Field.Field>
-                    <Button type="button" onclick={() => signIn()}>
-                        Sign In
-                    </Button>
-                </Field.Group>
-            </form>
-        </DialogContent>
-    </Dialog.Root>
-    {:else}
     <Button onclick={() => signOut()}>Sign Out</Button>
-    {/if}
 </div>
 <div class="grid grid-cols-1 w-1/2 mx-auto">
     <h6 class="text-7xl font-chewy">Dashboard</h6>
