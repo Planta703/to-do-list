@@ -1,5 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
 @import "tailwindcss";
-
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -74,6 +74,7 @@
 }
 
 @theme inline {
+  --font-chewy: "Chewy", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -113,7 +114,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 font-chewy;
   }
   body {
     @apply bg-background text-foreground;
