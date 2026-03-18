@@ -204,7 +204,9 @@
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
             <div class="flex gap-5 items-center">
+            <div class="flex gap-5 items-center">
                 <DropdownMenu.Root>
+                    <DropdownMenuTrigger class="flex items-center gap-1">
                     <DropdownMenuTrigger class="flex items-center gap-1">
                         {item.date}
                         <ChevronDown color="black" />
