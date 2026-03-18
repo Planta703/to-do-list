@@ -201,8 +201,8 @@
                     {/if}
                 </Field.Group>
             </form>
-            <button class="flex" onclick={() => signin = !signin}>
-                <p class="hover:cursor-pointer">Don't have an account?</p>
+            <button class="flex place-self-center" onclick={() => signin = !signin}>
+                <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Login"}</p>
             </button>
         </DialogContent>
     </Dialog.Root>
