@@ -43,6 +43,7 @@
     let users = $state<User[]>([])
     let signin = $state(true)
     let error_message = $state('')
+    let email_sent = $state(false)
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId(); loadItems()
@@ -120,7 +121,7 @@
         })
         if (error) {
             error_message = error.message
-        }
+        } else { email_sent = true }
     }
     
     async function signOut() {
@@ -175,6 +176,7 @@
             Sign In!
         </DialogTrigger>
         <DialogContent>
+        {#if !email_sent}
             <form>
                 <Field.Group>
                     <Field.Field>
@@ -206,6 +208,10 @@
             <button class="flex place-self-center" onclick={() => signin = !signin}>
                 <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Have an account?"}</p>
             </button>
+            {:else}
+            <p class="text-3xl">Email was sent to inbox!</p>
+            <Button onclick={() => email_sent = !email_sent}>Alright</Button>
+            {/if}
         </DialogContent>
     </Dialog.Root>
     {:else}
