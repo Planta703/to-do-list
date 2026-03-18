@@ -27,7 +27,7 @@
         checked: boolean;
         date: string;
         deleted: boolean;
-        dashbaord: boolean;
+        dashboard: boolean;
     };
     
     let value = $state(today(getLocalTimeZone()));
@@ -76,7 +76,7 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*").eq("deleted", false).eq("dashboard", false);
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false);
         list = data ?? [];
     }
     
@@ -115,6 +115,7 @@
     }
     
     $effect(() => {
+        loadItems()
         list.sort((a, b) => {
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
@@ -140,7 +141,7 @@
         
         const {error} = await supabase
         .from('Items')
-        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false, 'dashboard': false})
+        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'date': value.toString().split('T')[0]})
         .select()
         input=''
         value=today(getLocalTimeZone())
@@ -201,7 +202,7 @@
         </InputGroupAddon>
     </InputGroup.Root>
     {#each list as item (item.item_id)}
-    <div class="flex justify-between mt-5">
+    <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
