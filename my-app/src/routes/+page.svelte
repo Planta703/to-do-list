@@ -16,6 +16,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
+    import { CalendarPlus, ChevronDown } from "@lucide/svelte"
     
     type Item = {
         item_id: string;
@@ -168,7 +169,7 @@
         <InputGroupAddon align="inline-end">
             <DropdownMenu.Root>
                 <DropdownMenuTrigger>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                <CalendarPlus color="black" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <Calendar
@@ -188,7 +189,10 @@
                 <Label for={item.item_id} class={{ 'line-through': item.checked, '': !item.checked }}>{item.text}</Label>
             </div>
             <DropdownMenu.Root>
-                <DropdownMenuTrigger class="place-self-end">{item.date}</DropdownMenuTrigger>
+                <DropdownMenuTrigger class="place-self-end grid grid-cols-2">
+                    {item.date}
+                    <ChevronDown color="black" />
+                </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <Calendar
                     type="single"
