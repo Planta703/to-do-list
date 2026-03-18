@@ -85,7 +85,7 @@
         }
     }
     
-    async function check(item: any) {
+    async function check(item: Item) {
         await supabase
         .from('Items')
         .update({ 'checked': item.checked })
@@ -93,7 +93,7 @@
         .select();          // Optional: returns updated row(s)
     }
     
-    async function deleteItem(item: any) {
+    async function deleteItem(item: Item) {
         await supabase
         .from('Items')
         .update({ 'deleted': true })
