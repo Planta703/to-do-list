@@ -75,7 +75,7 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*").eq("deleted", false);
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false).eq("dashboard", false)
         list = data ?? [];
     }
     
@@ -114,6 +114,7 @@
     }
     
     $effect(() => {
+        loadItems()
         list.sort((a, b) => {
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
@@ -200,7 +201,7 @@
         </InputGroupAddon>
     </InputGroup.Root>
     {#each list as item (item.item_id)}
-    <div class="flex justify-between mt-5">
+    <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
