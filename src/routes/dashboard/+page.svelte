@@ -73,7 +73,7 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*").eq("deleted", false);
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false).eq("dashboard", true);
         list = data ?? [];
     }
     

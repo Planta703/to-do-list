@@ -83,7 +83,7 @@
     });
     
     async function loadItems() {
-        const { data } = await supabase.from("Items").select("*").eq("deleted", false).eq("dashboard", false)
+        const { data } = await supabase.from("Items").select("*").eq("deleted", false)
         list = data ?? [];
     }
 
@@ -149,7 +149,7 @@
 <NavigationMenu.Root>
     <NavigationMenu.List>
         <NavigationMenu.Item>
-            <NavigationMenu.Link class="hover:cursor-pointer text-2xl" href="/dashboard">Link</NavigationMenu.Link>
+            <NavigationMenu.Link class="hover:cursor-pointer text-2xl" href="/dashboard">Dashboard</NavigationMenu.Link>
         </NavigationMenu.Item>
     </NavigationMenu.List>
 </NavigationMenu.Root>
