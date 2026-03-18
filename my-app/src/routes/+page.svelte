@@ -17,6 +17,7 @@
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
     import { CalendarPlus, ChevronDown } from "@lucide/svelte"
+    import { buttonVariants } from "@/components/ui/button/button.svelte";
     
     type Item = {
         item_id: string;
@@ -33,8 +34,9 @@
     let password = $state('');
     let currentUserId = $state('');
     
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId()
+        if (event === 'SIGNED_OUT') currentUserId = ''; loadItems()
     })
     
     onMount(() => {
@@ -69,8 +71,7 @@
     });
     
     async function loadItems() {
-        const { data, error } = await supabase.from("Items").select("*");
-        if (error) throw error;
+        const { data } = await supabase.from("Items").select("*");
         list = data ?? [];
     }
     
@@ -98,6 +99,10 @@
             password: password,
         })
     }
+
+    async function signOut() {
+        await supabase.auth.signOut({ scope: 'local' })
+    }
     
     $effect(() => {
         list.sort((a, b) => {
@@ -122,12 +127,10 @@
         
         e.preventDefault()
         if (!input.trim()) return
-
-        console.log(currentUserId)
         
         const {error} = await supabase
         .from('Items')
-        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0]})
+        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
         .select()
         input=''
         value=today(getLocalTimeZone())
@@ -136,8 +139,9 @@
     }
 </script>
 <div class="flex justify-end mt-5 mr-5">
+{#if !currentUserId}
     <Dialog.Root>
-        <DialogTrigger type="button">
+        <DialogTrigger class={buttonVariants({ variant: "default" })} type="button">
             Sign In!
         </DialogTrigger>
         <DialogContent>
@@ -155,13 +159,16 @@
                         </Field.Label>
                         <Input bind:value={password} type="password" />
                     </Field.Field>
-                    <Button type="submit" onclick={() => signIn()}>
+                    <Button type="button" onclick={() => signIn()}>
                         Sign In
                     </Button>
                 </Field.Group>
             </form>
         </DialogContent>
     </Dialog.Root>
+    {:else}
+    <Button onclick={() => signOut()}>Sign Out</Button>
+    {/if}
 </div>
 <div class="grid grid-cols-1 w-1/2 mx-auto">
     <InputGroup.Root class="mt-10">
