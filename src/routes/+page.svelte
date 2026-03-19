@@ -56,7 +56,7 @@
     onMount(async() => {
         loadItems();
         await loadUsers();
-        userId()
+        await userId()
         
         const subscription = supabase
         .channel("public:Items")
