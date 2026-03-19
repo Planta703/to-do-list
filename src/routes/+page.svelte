@@ -188,6 +188,7 @@
             return
         }
 
+        inputerror = ''
         await supabase
         .from('Items')
         .insert({ 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
