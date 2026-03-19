@@ -19,9 +19,8 @@
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-    import OpenAI from "openai";
-    const openai = new OpenAI();
-    
+    import { json } from "@sveltejs/kit";
+
     type Item = {
         item_id: string;
         user_id: string;
@@ -164,14 +163,20 @@
         e.preventDefault()
         if (!input.trim()) return
         
-        const moderation = await openai.moderations.create({
-            model: "omni-moderation-latest",
-            input: input,
-        });
-        
-        if (moderation.results[0].flagged == true) {
+        const fetchresult = await fetch('/api/moderate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text : input.trim() })
+        })
+
+        const result = await fetchresult.json()
+        if (result == true) {
             console.error("Invalid Input")
+            return
         }
+
 
         await supabase
         .from('Items')
