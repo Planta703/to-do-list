@@ -14,7 +14,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus } from "@lucide/svelte"
+    import { CalendarPlus, SendHorizontal } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
@@ -145,6 +145,14 @@
             return 0;
         })
     })
+
+    async function databaseAdd(item: Item) {
+        await supabase
+        .from('Items')
+        .update({ 'database': true })
+        .eq('item_id', item.item_id)  // ← Add this: filter by primary key
+        .select();          // Optional: returns updated row(s)
+    }
     
     async function itemsToList(e: KeyboardEvent) {
         if (e.key !== 'Enter') return
@@ -176,7 +184,7 @@
             Sign In!
         </DialogTrigger>
         <DialogContent>
-        {#if !email_sent}
+            {#if !email_sent}
             <form>
                 <Field.Group>
                     <Field.Field>
@@ -184,72 +192,73 @@
                             Email
                         </Field.Label>
                         <Input id="email" bind:value={email} oninput={() => error_message = ''} type="email" autocomplete="on" />
-                    </Field.Field>
-                    <Field.Field>
-                        <Field.Label for="password">
-                            Password
-                        </Field.Label>
-                        <Input id="password" bind:value={password} onclick={() => error_message = ''} type="password" autocomplete="on" />
-                    </Field.Field>
-                    {#if error_message}
-                    <p class="text-red-500 inline-flex justify-center text-sm">{error_message}</p>
-                    {/if}
-                    {#if signin}
-                    <Button type="button" onclick={() => signIn()}>
-                        Sign In
-                    </Button>
+                        </Field.Field>
+                        <Field.Field>
+                            <Field.Label for="password">
+                                Password
+                            </Field.Label>
+                            <Input id="password" bind:value={password} onclick={() => error_message = ''} type="password" autocomplete="on" />
+                            </Field.Field>
+                            {#if error_message}
+                            <p class="text-red-500 inline-flex justify-center text-sm">{error_message}</p>
+                            {/if}
+                            {#if signin}
+                            <Button type="button" onclick={() => signIn()}>
+                                Sign In
+                            </Button>
+                            {:else}
+                            <Button type="button" onclick={() => signUp()}>
+                                Sign Up
+                            </Button>
+                            {/if}
+                        </Field.Group>
+                    </form>
+                    <button class="flex place-self-center" onclick={() => signin = !signin}>
+                        <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Have an account?"}</p>
+                    </button>
                     {:else}
-                    <Button type="button" onclick={() => signUp()}>
-                        Sign Up
-                    </Button>
+                    <p class="text-3xl">Email was sent to inbox!</p>
+                    <Button onclick={() => email_sent = !email_sent}>Alright</Button>
                     {/if}
-                </Field.Group>
-            </form>
-            <button class="flex place-self-center" onclick={() => signin = !signin}>
-                <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Have an account?"}</p>
-            </button>
+                </DialogContent>
+            </Dialog.Root>
             {:else}
-            <p class="text-3xl">Email was sent to inbox!</p>
-            <Button onclick={() => email_sent = !email_sent}>Alright</Button>
+            <Button onclick={() => signOut()}>Sign Out</Button>
             {/if}
-        </DialogContent>
-    </Dialog.Root>
-    {:else}
-    <Button onclick={() => signOut()}>Sign Out</Button>
-    {/if}
-</div>
-<div class="grid grid-cols-1 w-1/2 mx-auto">
-    <h6 class="text-7xl font-chewy">Community</h6>
-    {#if currentUserId}
-    <InputGroup.Root class="mt-10 h-15">
-        <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
-        <InputGroupAddon align="inline-end">
-            <DropdownMenu.Root>
-                <DropdownMenuTrigger>
-                    <CalendarPlus color="black" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <Calendar
-                    type="single"
-                    bind:value
-                    class="rounded-md border shadow-sm"
-                    captionLayout="dropdown"
-                    />
-                </DropdownMenuContent>
-            </DropdownMenu.Root>
-        </InputGroupAddon>
-    </InputGroup.Root>
-    {:else}
-<h6 class="text-2xl">Please Sign In to Participate</h6>
-    {/if}
-    {#each list as item (item.item_id)}
-    <div class="flex justify-between my-5">
-        <div class="flex gap-2 place-items-center">
-            <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
         </div>
-        <div class="flex gap-5 items-center">
-            {item.date}
+        <div class="grid grid-cols-1 w-1/2 mx-auto">
+            <h6 class="text-7xl font-chewy">Community</h6>
+            {#if currentUserId}
+            <InputGroup.Root class="mt-10 h-15">
+                <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
+                <InputGroupAddon align="inline-end">
+                    <DropdownMenu.Root>
+                        <DropdownMenuTrigger>
+                            <CalendarPlus color="black" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <Calendar
+                            type="single"
+                            bind:value
+                            class="rounded-md border shadow-sm"
+                            captionLayout="dropdown"
+                            />
+                        </DropdownMenuContent>
+                    </DropdownMenu.Root>
+                </InputGroupAddon>
+            </InputGroup.Root>
+            {:else}
+            <h6 class="text-2xl">Please Sign In to Participate</h6>
+            {/if}
+            {#each list as item (item.item_id)}
+            <div class="flex justify-between my-5">
+                <div class="flex gap-2 place-items-center">
+                    <SendHorizontal color="black" onclick={() => databaseAdd(item)} />
+                    <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
+                </div>
+                <div class="flex gap-5 items-center">
+                    {item.date}
+                </div>
+            </div>
+            {/each}
         </div>
-    </div>
-    {/each}
-</div>
