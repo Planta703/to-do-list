@@ -19,6 +19,7 @@
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+    import { pipeline } from "@huggingface/transformers"; 
     
     type Item = {
         item_id: string;
@@ -161,6 +162,13 @@
         
         e.preventDefault()
         if (!input.trim()) return
+
+        const answerer = await pipeline('question-answering', 'Xenova/distilbert-base-cased-distilled-squad')
+        const question = `Is the following text not gibberish, appropriate for a school-age audience, and a reasonable task or to-do item? Text: ${input}`
+        const context = "You are a validation assistant. You reply with only the single word 'true' or 'false' — no punctuation, no explanation, nothing else."
+        const output = await answerer(question, context)
+
+        if (output.QuestionAnsweringOutput === 'false') console.error('Not Valid')
         
         await supabase
         .from('Items')
