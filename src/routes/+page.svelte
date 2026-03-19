@@ -31,11 +31,6 @@
         dashboard: boolean;
     };
     
-    type User ={
-        user_id: string;
-        type: string;
-    }
-    
     let value = $state(today(getLocalTimeZone()));
     let list = $state<Item[]>([]); // keep the list as reactive state
     let input = $state('');
@@ -43,7 +38,6 @@
     let password = $state('');
     let currentUserId = $state('');
     let dashboard = $state(false)
-    let users = $state<User[]>([])
     let signin = $state(true)
     let error_message = $state('')
     let email_sent = $state(false)
@@ -57,7 +51,6 @@
     
     onMount(async() => {
         loadItems();
-        await loadUsers();
         await userId()
         
         const subscription = supabase
@@ -94,17 +87,17 @@
         list = data ?? [];
     }
     
-    async function loadUsers() {
-        const { data } = await supabase.from("users").select("*").eq("type", "dashboard");
-        users = data ?? [];
-    }
-    
     async function userId() {
         const { data } = await supabase.auth.getUser();
         if (data.user) {
             currentUserId = data.user.id;
-            if (users.some(u => u.user_id === currentUserId)) {
-                dashboard = true
+            const { data: userData } = await supabase
+            .from('users')
+            .select('*')
+            .eq("type", "dashboard")
+            .eq("user_id", currentUserId)
+            if (userData && userData.length > 0) {
+                dashboard = true;
             }
         }
     }
