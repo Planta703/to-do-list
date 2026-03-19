@@ -18,6 +18,7 @@
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
+    import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
     
     type Item = {
         item_id: string;
@@ -256,16 +257,25 @@
                 <div class="flex gap-2 place-items-center">
                     {#if dashboard}
                     {#if !item.dashboard}
-                    <SendHorizontal color="black" onclick={() => dashboardAdd(item)} />
-                        {:else}
-                        <Check color="black" />
-                        {/if}
-                        {/if}
-                        <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
+                    <AlertDialog.Root>
+                        <AlertDialog.Trigger>
+                            <SendHorizontal color="black" /></AlertDialog.Trigger>
+                                <AlertDialog.Content>
+                                    <AlertDialog.Title class="text-center">Database Addition</AlertDialog.Title>
+                                    <AlertDialog.Description class="text-center">Pressing Confirm below will move this item to the shared dashboard.</AlertDialog.Description>
+                                    <AlertDialog.Action onclick={() => dashboardAdd(item)}>Confirm</AlertDialog.Action>
+                                    <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                                </AlertDialog.Content>
+                            </AlertDialog.Root>
+                            {:else}
+                            <Check color="black" />                        
+                            {/if}
+                            {/if}
+                            <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
+                        </div>
+                        <div class="flex gap-5 items-center">
+                            {item.date}
+                        </div>
                     </div>
-                    <div class="flex gap-5 items-center">
-                        {item.date}
-                    </div>
+                    {/each}
                 </div>
-                {/each}
-            </div>
