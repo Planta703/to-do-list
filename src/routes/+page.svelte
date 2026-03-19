@@ -155,34 +155,36 @@
     async function itemsToList(e: KeyboardEvent) {
         if (e.key !== 'Enter') return
         loading = true
-
+        
         e.preventDefault()
         if (!input.trim()) return
         
-        const fetchresult = await fetch('/api/moderate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text : input.trim() })
-        })
-        
-        const result = await fetchresult.json()
-        
-        if (!fetchresult.ok) {
-            if (result.error.status == 429) {
-                inputerror = 'Enough items added today.'
-            } else {
-                inputerror = 'Error occured'
+        if (!dashboard) {
+            const fetchresult = await fetch('/api/moderate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text : input.trim() })
+            })
+            
+            const result = await fetchresult.json()
+            
+            if (!fetchresult.ok) {
+                if (result.error.status == 429) {
+                    inputerror = 'Enough items added today.'
+                } else {
+                    inputerror = 'Error occured'
+                }
+                loading = false
+                return
             }
-            loading = false
-            return
-        }
-        
-        if (result == true) {
-            inputerror = 'Invalid Input'
-            loading = false
-            return
+            
+            if (result == true) {
+                inputerror = 'Invalid Input'
+                loading = false
+                return
+            }
         }
         
         inputerror = ''
