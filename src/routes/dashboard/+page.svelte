@@ -195,7 +195,7 @@
                         />
                     </DropdownMenuContent>
                 </DropdownMenu.Root>
-                <Trash2 size=20 onclick={() => deleteItem(item)} />
+                <Trash2 color="black" size=20 onclick={() => deleteItem(item)} />
                 </div>
             </div>
             {/each}
