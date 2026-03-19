@@ -19,8 +19,8 @@
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-    import { json } from "@sveltejs/kit";
-
+    import { Spinner } from "$lib/components/ui/spinner/index.js";
+    
     type Item = {
         item_id: string;
         user_id: string;
@@ -48,6 +48,7 @@
     let error_message = $state('')
     let email_sent = $state(false)
     let inputerror = $state('')
+    let loading = $state(false)
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId(); loadItems()
@@ -160,7 +161,8 @@
     
     async function itemsToList(e: KeyboardEvent) {
         if (e.key !== 'Enter') return
-        
+        loading = true
+
         e.preventDefault()
         if (!input.trim()) return
         
@@ -171,28 +173,31 @@
             },
             body: JSON.stringify({ text : input.trim() })
         })
-
+        
         const result = await fetchresult.json()
-
+        
         if (!fetchresult.ok) {
             if (result.error.status == 429) {
                 inputerror = 'Enough items added today.'
             } else {
                 inputerror = 'Error occured'
             }
+            loading = false
             return
         }
-
+        
         if (result == true) {
             inputerror = 'Invalid Input'
+            loading = false
             return
         }
-
+        
         inputerror = ''
         await supabase
         .from('Items')
         .insert({ 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
         .select()
+        loading = false
         input=''
         value=today(getLocalTimeZone())
     }
@@ -260,6 +265,9 @@
             {#if currentUserId}
             <p class="text-red-500 mt-10 text-xl">{inputerror}</p>
             <InputGroup.Root class="h-15">
+                {#if loading}
+                <Spinner class="ml-5 size-5" />
+                {/if}
                 <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
                 <InputGroupAddon align="inline-end">
                     <DropdownMenu.Root>
