@@ -162,7 +162,7 @@
         
         await supabase
         .from('Items')
-        .insert({'user_id': currentUserId, 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
+        .insert({ 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
         .select()
         input=''
         value=today(getLocalTimeZone())
