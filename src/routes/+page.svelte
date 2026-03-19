@@ -19,6 +19,8 @@
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+    import OpenAI from "openai";
+    const openai = new OpenAI();
     
     type Item = {
         item_id: string;
@@ -162,6 +164,15 @@
         e.preventDefault()
         if (!input.trim()) return
         
+        const moderation = await openai.moderations.create({
+            model: "omni-moderation-latest",
+            input: input,
+        });
+        
+        if (moderation.results[0].flagged == true) {
+            console.error("Invalid Input")
+        }
+
         await supabase
         .from('Items')
         .insert({ 'item_id': crypto.randomUUID(), 'text': input.trim(), 'checked': false, 'date': value.toString().split('T')[0], 'deleted': false})
@@ -260,22 +271,22 @@
                     <AlertDialog.Root>
                         <AlertDialog.Trigger>
                             <SendHorizontal color="black" /></AlertDialog.Trigger>
-                                <AlertDialog.Content>
-                                    <AlertDialog.Title class="text-center">Database Addition</AlertDialog.Title>
-                                    <AlertDialog.Description class="text-center">Pressing Confirm below will move this item to the shared dashboard.</AlertDialog.Description>
-                                    <AlertDialog.Action onclick={() => dashboardAdd(item)}>Confirm</AlertDialog.Action>
-                                    <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                                </AlertDialog.Content>
-                            </AlertDialog.Root>
-                            {:else}
-                            <Check color="black" />                        
-                            {/if}
-                            {/if}
-                            <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
-                        </div>
-                        <div class="flex gap-5 items-center">
-                            {item.date}
-                        </div>
+                            <AlertDialog.Content>
+                                <AlertDialog.Title class="text-center">Database Addition</AlertDialog.Title>
+                                <AlertDialog.Description class="text-center">Pressing Confirm below will move this item to the shared dashboard.</AlertDialog.Description>
+                                <AlertDialog.Action onclick={() => dashboardAdd(item)}>Confirm</AlertDialog.Action>
+                                <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                            </AlertDialog.Content>
+                        </AlertDialog.Root>
+                        {:else}
+                        <Check color="black" />                        
+                        {/if}
+                        {/if}
+                        <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
                     </div>
-                    {/each}
+                    <div class="flex gap-5 items-center">
+                        {item.date}
+                    </div>
                 </div>
+                {/each}
+            </div>
