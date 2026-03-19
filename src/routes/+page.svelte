@@ -14,7 +14,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, SendHorizontal } from "@lucide/svelte"
+    import { CalendarPlus, SendHorizontal, Check } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
@@ -26,6 +26,7 @@
         checked: boolean;
         date: string;
         deleted: boolean;
+        dashboard: boolean;
     };
     
     type User ={
@@ -146,10 +147,10 @@
         })
     })
     
-    async function databaseAdd(item: Item) {
+    async function dashboardAdd(item: Item) {
         await supabase
         .from('Items')
-        .update({ 'database': true })
+        .update({ 'dashboard': true })
         .eq('item_id', item.item_id)  // ← Add this: filter by primary key
         .select();          // Optional: returns updated row(s)
     }
@@ -254,7 +255,11 @@
             <div class="flex justify-between my-5">
                 <div class="flex gap-2 place-items-center">
                     {#if dashboard}
-                    <SendHorizontal color="black" onclick={() => databaseAdd(item)} />
+                    {#if item.dashboard}
+                    <SendHorizontal color="black" onclick={() => dashboardAdd(item)} />
+                        {:else}
+                        <Check color="black" />
+                        {/if}
                         {/if}
                         <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
                     </div>
