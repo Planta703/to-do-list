@@ -47,6 +47,7 @@
     let signin = $state(true)
     let error_message = $state('')
     let email_sent = $state(false)
+    let inputerror = $state('')
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_IN') userId(); loadItems()
@@ -172,6 +173,16 @@
         })
 
         const result = await fetchresult.json()
+
+        if (!fetchresult.ok) {
+            if (result.error.status == 429) {
+                inputerror = 'Enough items added today.'
+            } else {
+                inputerror = 'Error occured'
+            }
+            return
+        }
+
         if (result == true) {
             console.error("Invalid Input")
             return
@@ -247,7 +258,8 @@
         <div class="grid grid-cols-1 w-1/2 mx-auto">
             <h6 class="text-7xl font-chewy">Community</h6>
             {#if currentUserId}
-            <InputGroup.Root class="mt-10 h-15">
+            <p class="text-red-500 mt-10 text-xl">{inputerror}</p>
+            <InputGroup.Root class="h-15">
                 <InputGroup.Input id="input" class="text-2xl!" onkeypress={itemsToList} contenteditable="true" bind:value={input} />
                 <InputGroupAddon align="inline-end">
                     <DropdownMenu.Root>

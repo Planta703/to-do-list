@@ -5,14 +5,20 @@ import OpenAI from "openai";
 const openai = new OpenAI( {apiKey : OPENAI_API_KEY } );
 
 export const POST: RequestHandler = async({request}) => {
-    const { text } = await request.json()
-    
-    const moderation = await openai.moderations.create({
-        model: "omni-moderation-latest",
-        input: text,
-    });
-
-    return json({
-        result : moderation.results[0].flagged
-    })
-}
+    try {
+        const { text } = await request.json()
+        
+        const moderation = await openai.moderations.create({
+            model: "omni-moderation-latest",
+            input: text,
+        });
+        
+        return json({
+            result : moderation.results[0].flagged
+        })} catch (error) {
+            return json(
+                { error: error },
+                { status: 500 }
+            )
+        }
+    }
