@@ -258,7 +258,7 @@
                         <p class="hover:cursor-pointer">{signin ? "Don't have an account?" : "Have an account?"}</p>
                     </button>
                     {:else}
-                    <p class="text-3xl">Email was sent to inbox!</p>
+                    <p class="text-3xl text-center">Email was sent to inbox!</p>
                     <Button class="flex place-self-center" onclick={() => email_sent = !email_sent}>Alright</Button>
                     {/if}
                 </DialogContent>
