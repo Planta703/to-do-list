@@ -174,7 +174,7 @@
             
             if (!fetchresult.ok) {
                 if (result.error.status == 429) {
-                    inputerror = 'Enough items added today.'
+                    inputerror = 'Enough items added for now.'
                 } else {
                     inputerror = 'Error occured'
                 }
