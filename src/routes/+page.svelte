@@ -244,11 +244,11 @@
                             <p class="text-red-500 inline-flex justify-center text-sm">{error_message}</p>
                             {/if}
                             {#if signin}
-                            <Button type="button" onclick={() => signIn()}>
+                            <Button class="flex place-self-center" type="button" onclick={() => signIn()}>
                                 Sign In
                             </Button>
                             {:else}
-                            <Button type="button" onclick={() => signUp()}>
+                            <Button class="flex place-self-center" type="button" onclick={() => signUp()}>
                                 Sign Up
                             </Button>
                             {/if}
