@@ -14,7 +14,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, SendHorizontal, Check } from "@lucide/svelte"
+    import { CalendarPlus, SendHorizontal, Check, CircleCheck } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
@@ -131,9 +131,9 @@
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
             }
-           if (a.dashboard !== b.dashboard) {
+            if (a.dashboard !== b.dashboard) {
                 return Number(b.dashboard) - Number(a.dashboard)
-           } 
+            } 
             if (a.checked) {
                 if (a.date > b.date) return -1;
                 if (a.date < b.date) return 1;
@@ -300,6 +300,7 @@
                 <div class="flex gap-2 place-items-center">
                     {#if dashboard}
                     {#if !item.dashboard}
+                    {#if !item.checked}
                     <AlertDialog.Root>
                         <AlertDialog.Trigger>
                             <SendHorizontal color="black" /></AlertDialog.Trigger>
@@ -310,6 +311,9 @@
                                 <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
                             </AlertDialog.Content>
                         </AlertDialog.Root>
+                        {:else}
+                        <CircleCheck />
+                        {/if}
                         {:else}
                         <Check color="black" />                        
                         {/if}
