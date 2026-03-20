@@ -14,7 +14,7 @@
     import Input from "@/components/ui/input/input.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, SendHorizontal, Check } from "@lucide/svelte"
+    import { CalendarPlus, SendHorizontal, Check, CircleCheck } from "@lucide/svelte"
     import { buttonVariants } from "@/components/ui/button/button.svelte";
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
@@ -311,7 +311,11 @@
                             </AlertDialog.Content>
                         </AlertDialog.Root>
                         {:else}
-                        <Check color="black" />                        
+                        {#if !item.checked}
+                        <Check color="black" />  
+                        {:else}      
+                        <CircleCheck color="black" />
+                        {/if}          
                         {/if}
                         {/if}
                         <p class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</p>
