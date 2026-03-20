@@ -28,6 +28,7 @@
     let value = $state(today(getLocalTimeZone()));
     let list = $state<Item[]>([]); // keep the list as reactive state
     let input = $state('');
+    let currentUserId = $state('')
     
     supabase.auth.onAuthStateChange((event) => {
         if (event === 'SIGNED_OUT') window.location.href = '/'
@@ -38,6 +39,7 @@
         if (!user) {
             window.location.href = '/'
         } else {
+            currentUserId = data.user.id;
             const { data: userData } = await supabase
             .from('users')
             .select('*')
