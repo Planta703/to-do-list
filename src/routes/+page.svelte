@@ -174,7 +174,7 @@
             
             if (!fetchresult.ok) {
                 if (result.error.status == 429) {
-                    inputerror = 'Enough items added for now. Try again soon!'
+                    inputerror = 'Enough items added for now. Try again soon or ask a student senate member for help!'
                 } else {
                     inputerror = 'Error occured'
                 }
