@@ -41,11 +41,11 @@
     let signin = $state(true)
     let error_message = $state('')
     let email_sent = $state(false)
-    let inputerror = $state('')
+    let inputerror = $state('You are not anonymous. Be mindful of what you input.')
     let loading = $state(false)
     
     supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_IN') userId(); loadItems(); inputerror = ''
+        if (event === 'SIGNED_IN') userId(); loadItems(); inputerror = 'You are not anonymous. Be mindful of what you input.'
         if (event === 'SIGNED_OUT') currentUserId = ''; list = []; dashboard = false
     })
     
@@ -189,7 +189,7 @@
             }
         }
         
-        inputerror = ''
+        inputerror = 'You are not anonymous. Be mindful of what you input.'
         if (!dashboard) {
             await supabase
             .from('Items')
