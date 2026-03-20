@@ -11,7 +11,7 @@
     import Button from "@/components/ui/button/button.svelte";
     import { supabase } from "$lib/supabaseClient.js";
     import { onMount, onDestroy } from "svelte";
-    import { CalendarPlus, ChevronDown, Trash2 } from "@lucide/svelte"
+    import { CalendarPlus, ChevronDown, Trash2, CircleX } from "@lucide/svelte"
     import { cn } from "@/utils";
     import * as NavigationMenu from "$lib/components/ui/navigation-menu/index.js";
     
@@ -130,14 +130,20 @@
         e.preventDefault()
         if (!input.trim()) return
         
-        const {error} = await supabase
+        await supabase
         .from('Items')
         .insert({'text': input.trim(), 'date': value.toString().split('T')[0], 'dashboard': true})
         .select()
         input=''
         value=today(getLocalTimeZone())
-        
-        if (error) throw error
+    }
+
+    async function dashboardRemove(item: Item) {
+       await supabase
+       .from('Items')
+       .update({ 'dashboard': false })
+       .eq('item_id', item.item_id ) 
+       .select()
     }
 </script>
 <NavigationMenu.Root>
@@ -173,6 +179,7 @@
     {#each list as item (item.item_id)}
     <div class="flex justify-between my-5">
         <div class="flex gap-2 place-items-center">
+            <CircleX onclick={() => dashboardRemove(item)} />
             <Checkbox id={item.item_id}  onCheckedChange={() => check(item)} bind:checked={item.checked} />
                 <Label for={item.item_id} class={cn( item.checked ? 'line-through' : '', "text-2xl" )}>{item.text}</Label>
             </div>
