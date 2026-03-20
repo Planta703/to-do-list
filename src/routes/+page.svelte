@@ -45,7 +45,7 @@
     let loading = $state(false)
     
     supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_IN') userId(); loadItems()
+        if (event === 'SIGNED_IN') userId(); loadItems(); inputerror = ''
         if (event === 'SIGNED_OUT') currentUserId = ''; list = []; dashboard = false
     })
     
