@@ -56,7 +56,7 @@
             if (payload.eventType === "INSERT") {
                 list = [...list, row];
             } else if (payload.eventType === "UPDATE") {
-                if (row.deleted) {
+                if (row.deleted || !row.dashboard) {
                     list = list.filter((item) => item.item_id !== row.item_id)
                 } else {
                     list = list.map((item) =>
