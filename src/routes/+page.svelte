@@ -131,9 +131,9 @@
             if (a.checked !== b.checked) {
                 return Number(a.checked) - Number(b.checked)
             }
-           if (a.dashboard !== b.dashboard) {
+            if (a.dashboard !== b.dashboard) {
                 return Number(b.dashboard) - Number(a.dashboard)
-           } 
+            } 
             if (a.checked) {
                 if (a.date > b.date) return -1;
                 if (a.date < b.date) return 1;
