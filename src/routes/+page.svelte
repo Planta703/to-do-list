@@ -259,7 +259,7 @@
                     </button>
                     {:else}
                     <p class="text-3xl">Email was sent to inbox!</p>
-                    <Button onclick={() => email_sent = !email_sent}>Alright</Button>
+                    <Button class="flex place-self-center" onclick={() => email_sent = !email_sent}>Alright</Button>
                     {/if}
                 </DialogContent>
             </Dialog.Root>
