@@ -38,14 +38,15 @@
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
             window.location.href = '/'
+            return
         } else {
-            currentUserId = data.user.id;
+            currentUserId = user.id;
             const { data: userData } = await supabase
             .from('users')
             .select('*')
             .eq("type", "dashboard")
             .eq("user_id", currentUserId)
-            if (!userData || !userData.length > 0) {
+            if (!userData || userData.length === 0) {
                 window.location.href = '/'
             }
         }
