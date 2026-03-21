@@ -20,6 +20,7 @@
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import Textarea from '@/components/ui/textarea/textarea.svelte';
 
 	type Item = {
 		item_id: string;
@@ -227,7 +228,7 @@
 </script>
 
 {#if dashboard}
-	<NavigationMenu.Root>
+	<NavigationMenu.Root class="flex-0">
 		<NavigationMenu.List>
 			<NavigationMenu.Item>
 				<NavigationMenu.Link class="text-2xl hover:cursor-pointer" href="/dashboard"
@@ -299,39 +300,48 @@
 	{/if}
 </div>
 <div class="mx-auto grid w-1/2 grid-cols-1">
-	<h6 class="font-chewy text-7xl">Community</h6>
+	<h6 class="text-7xl">Community</h6>
 	{#if currentUserId}
-		<p class="mt-10 text-xl text-red-500">{inputerror}</p>
-		<InputGroup.Root class="grid h-15 grid-cols-1">
-			<div>
-				{#if loading}
-					<Spinner class="ml-5 size-5" />
-				{/if}
-				<InputGroup.Input
-					id="input"
-					class="text-2xl!"
-					onkeypress={itemsToList}
-					contenteditable="true"
-					bind:value={input_title}
-				/>
-				<InputGroupAddon align="inline-end">
-					<DropdownMenu.Root>
-						<DropdownMenuTrigger>
-							<CalendarPlus color="black" />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							<Calendar
-								type="single"
-								bind:value
-								class="rounded-md border shadow-sm"
-								captionLayout="dropdown"
-							/>
-						</DropdownMenuContent>
-					</DropdownMenu.Root>
-				</InputGroupAddon>
-			</div>
-			<InputGroup.Textarea class="text-xl!"></InputGroup.Textarea>
-		</InputGroup.Root>
+		<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
+		<Field.Set class="rounded-lg outline-2 outline-offset-35 outline-black">
+			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
+			<Field.Group>
+				<Field.Field>
+					<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
+					<InputGroup.Root class="h-15">
+						{#if loading}
+							<Spinner class="ml-5 size-5" />
+						{/if}
+						<InputGroup.Input
+							id="input"
+							class="text-2xl!"
+							onkeypress={itemsToList}
+							contenteditable="true"
+							bind:value={input_title}
+						/>
+						<InputGroupAddon align="inline-end">
+							<DropdownMenu.Root>
+								<DropdownMenuTrigger>
+									<CalendarPlus color="black" />
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<Calendar
+										type="single"
+										bind:value
+										class="rounded-md border shadow-sm"
+										captionLayout="dropdown"
+									/>
+								</DropdownMenuContent>
+							</DropdownMenu.Root>
+						</InputGroupAddon>
+					</InputGroup.Root>
+				</Field.Field>
+				<Field.Field>
+					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
+					<Textarea id="input-text text-xl" />
+				</Field.Field>
+			</Field.Group>
+		</Field.Set>
 	{:else}
 		<h6 class="text-2xl">Please Sign In to Participate</h6>
 	{/if}

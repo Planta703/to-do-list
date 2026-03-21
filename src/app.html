@@ -3,10 +3,12 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/x-icon" href="%sveltekit.assets%/favicon.ico" />
 		<title>NW Community Board</title>
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
+	<body data-sveltekit-preload-data="hover" class="flex min-h-[110vh] flex-col">
+		<div style="display: contents" class="shrink-0">%sveltekit.body%</div>
+		<div class="flex-1" />
 	</body>
 </html>
