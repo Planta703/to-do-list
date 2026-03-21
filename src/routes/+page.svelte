@@ -183,7 +183,7 @@
 			}
 
 			if (result == true) {
-				inputerror = 'Invalid Input';
+				inputerror = 'This input was tagged.';
 				loading = false;
 				return;
 			}
