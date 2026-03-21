@@ -303,7 +303,7 @@
 	<h6 class="text-7xl">Community</h6>
 	{#if currentUserId}
 		<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
-		<Field.Set class="rounded-lg outline-2 outline-offset-35 outline-black">
+		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
 			<Field.Group>
 				<Field.Field>
@@ -338,7 +338,7 @@
 				</Field.Field>
 				<Field.Field>
 					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-					<Textarea id="input-text text-xl" />
+					<Textarea id="input-text text-xl" bind:value={input_text} />
 				</Field.Field>
 			</Field.Group>
 		</Field.Set>
