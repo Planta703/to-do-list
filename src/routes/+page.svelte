@@ -157,12 +157,8 @@
 			.select(); // Optional: returns updated row(s)
 	}
 
-	async function itemsToList(e: KeyboardEvent) {
-		if (e.key !== 'Enter') return;
+	async function itemsToList() {
 		loading = true;
-
-		e.preventDefault();
-		if (!input_title.trim()) return;
 
 		if (!dashboard) {
 			const fetchresult = await fetch('/api/moderate', {
@@ -315,7 +311,6 @@
 						<InputGroup.Input
 							id="input"
 							class="text-2xl!"
-							onkeypress={itemsToList}
 							contenteditable="true"
 							bind:value={input_title}
 						/>
@@ -338,9 +333,17 @@
 				</Field.Field>
 				<Field.Field>
 					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-					<Textarea id="input-text text-xl" bind:value={input_text} />
+					<Textarea
+						class="text-xl! placeholder:text-xl placeholder:text-red-500"
+						id="input-text"
+						placeholder="Under Construction"
+						disabled
+						bind:value={input_text}
+					/>
 				</Field.Field>
 			</Field.Group>
+			<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button
+			>
 		</Field.Set>
 	{:else}
 		<h6 class="text-2xl">Please Sign In to Participate</h6>

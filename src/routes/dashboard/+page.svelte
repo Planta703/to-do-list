@@ -135,10 +135,7 @@
 		});
 	});
 
-	async function itemsToList(e: KeyboardEvent) {
-		if (e.key !== 'Enter') return;
-
-		e.preventDefault();
+	async function itemsToList() {
 		if (!input_title.trim()) return;
 
 		await supabase
@@ -178,7 +175,6 @@
 					<InputGroup.Input
 						id="input"
 						class="text-2xl!"
-						onkeypress={itemsToList}
 						contenteditable="true"
 						bind:value={input_title}
 					/>
@@ -201,9 +197,16 @@
 			</Field.Field>
 			<Field.Field>
 				<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-				<Textarea id="input-text text-xl" bind:value={input_text} onkeypress={itemsToList} />
+				<Textarea
+					class="text-xl! placeholder:text-xl placeholder:text-red-500"
+					id="input-text"
+					placeholder="Under Construction"
+					disabled
+					bind:value={input_text}
+				/>
 			</Field.Field>
 		</Field.Group>
+		<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button>
 	</Field.Set>
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
