@@ -304,11 +304,12 @@
 							<Spinner class="ml-5 size-5" />
 						{/if}
 						<InputGroup.Input
-							id="input"
+							id="input-title"
 							class="text-2xl!"
 							contenteditable="true"
 							bind:value={input_title}
 							oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
+							maxlength={100}
 						/>
 						<InputGroupAddon align="inline-end">
 							<DropdownMenu.Root>

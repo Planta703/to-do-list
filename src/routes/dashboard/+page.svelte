@@ -173,10 +173,11 @@
 				<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
 				<InputGroup.Root class="h-15">
 					<InputGroup.Input
-						id="input"
+						id="input-text"
 						class="text-2xl!"
 						contenteditable="true"
 						bind:value={input_title}
+						maxlength={100}
 					/>
 					<InputGroupAddon align="inline-end">
 						<DropdownMenu.Root>
