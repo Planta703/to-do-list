@@ -243,7 +243,8 @@
 								<Input
 									id="email"
 									bind:value={email}
-									oninput={() => (error_message = '')}
+									oninput={() =>
+										(error_message = 'You are not anonymous. Be mindful of what you input.')}
 									type="email"
 									autocomplete="on"
 								/>
@@ -307,6 +308,7 @@
 							class="text-2xl!"
 							contenteditable="true"
 							bind:value={input_title}
+							oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
 						/>
 						<InputGroupAddon align="inline-end">
 							<DropdownMenu.Root>
@@ -333,6 +335,7 @@
 						placeholder="Under Construction"
 						disabled
 						bind:value={input_text}
+						oninput={() => (inputerror = '')}
 					/>
 				</Field.Field>
 			</Field.Group>
