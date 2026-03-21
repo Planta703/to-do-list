@@ -24,6 +24,7 @@
 	type Item = {
 		item_id: string;
 		user_id: string;
+		title: string;
 		text: string;
 		checked: boolean;
 		date: string;
@@ -33,7 +34,8 @@
 
 	let value = $state(today(getLocalTimeZone()));
 	let list = $state<Item[]>([]); // keep the list as reactive state
-	let input = $state('');
+	let input_title = $state('');
+	let input_text = $state('');
 	let email = $state('');
 	let password = $state('');
 	let currentUserId = $state('');
@@ -159,7 +161,7 @@
 		loading = true;
 
 		e.preventDefault();
-		if (!input.trim()) return;
+		if (!input_title.trim()) return;
 
 		if (!dashboard) {
 			const fetchresult = await fetch('/api/moderate', {
@@ -167,7 +169,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ text: input.trim() })
+				body: JSON.stringify({ text: input_title.trim() })
 			});
 
 			const result = await fetchresult.json();
@@ -196,21 +198,21 @@
 				.from('Items')
 				.insert({
 					item_id: crypto.randomUUID(),
-					text: input.trim(),
+					text: input_title.trim(),
 					checked: false,
 					date: value.toString().split('T')[0],
 					deleted: false
 				})
 				.select();
 			loading = false;
-			input = '';
+			input_title = '';
 			value = today(getLocalTimeZone());
 		} else {
 			await supabase
 				.from('Items')
 				.insert({
 					item_id: crypto.randomUUID(),
-					text: input.trim(),
+					text: input_title.trim(),
 					checked: false,
 					date: value.toString().split('T')[0],
 					deleted: false,
@@ -218,7 +220,7 @@
 				})
 				.select();
 			loading = false;
-			input = '';
+			input_title = '';
 			value = today(getLocalTimeZone());
 		}
 	}
@@ -300,32 +302,35 @@
 	<h6 class="font-chewy text-7xl">Community</h6>
 	{#if currentUserId}
 		<p class="mt-10 text-xl text-red-500">{inputerror}</p>
-		<InputGroup.Root class="h-15">
-			{#if loading}
-				<Spinner class="ml-5 size-5" />
-			{/if}
-			<InputGroup.Input
-				id="input"
-				class="text-2xl!"
-				onkeypress={itemsToList}
-				contenteditable="true"
-				bind:value={input}
-			/>
-			<InputGroupAddon align="inline-end">
-				<DropdownMenu.Root>
-					<DropdownMenuTrigger>
-						<CalendarPlus color="black" />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<Calendar
-							type="single"
-							bind:value
-							class="rounded-md border shadow-sm"
-							captionLayout="dropdown"
-						/>
-					</DropdownMenuContent>
-				</DropdownMenu.Root>
-			</InputGroupAddon>
+		<InputGroup.Root class="grid h-15 grid-cols-1">
+			<div>
+				{#if loading}
+					<Spinner class="ml-5 size-5" />
+				{/if}
+				<InputGroup.Input
+					id="input"
+					class="text-2xl!"
+					onkeypress={itemsToList}
+					contenteditable="true"
+					bind:value={input_title}
+				/>
+				<InputGroupAddon align="inline-end">
+					<DropdownMenu.Root>
+						<DropdownMenuTrigger>
+							<CalendarPlus color="black" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<Calendar
+								type="single"
+								bind:value
+								class="rounded-md border shadow-sm"
+								captionLayout="dropdown"
+							/>
+						</DropdownMenuContent>
+					</DropdownMenu.Root>
+				</InputGroupAddon>
+			</div>
+			<InputGroup.Textarea class="text-xl!"></InputGroup.Textarea>
 		</InputGroup.Root>
 	{:else}
 		<h6 class="text-2xl">Please Sign In to Participate</h6>
