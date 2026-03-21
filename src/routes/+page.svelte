@@ -182,13 +182,11 @@
 				return;
 			}
 
-			if (result == true) {
+			if (result.result == true) {
 				inputerror = 'This input was tagged.';
 				loading = false;
 				return;
 			}
-
-			console.log(result);
 
 			await supabase
 				.from('Items')
