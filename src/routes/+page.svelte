@@ -187,10 +187,9 @@
 				loading = false;
 				return;
 			}
-		}
 
-		inputerror = 'You are not anonymous. Be mindful of what you input.';
-		if (!dashboard) {
+			console.log(result);
+
 			await supabase
 				.from('Items')
 				.insert({
@@ -201,9 +200,6 @@
 					deleted: false
 				})
 				.select();
-			loading = false;
-			input_title = '';
-			value = today(getLocalTimeZone());
 		} else {
 			await supabase
 				.from('Items')
@@ -216,10 +212,10 @@
 					dashboard: true
 				})
 				.select();
-			loading = false;
-			input_title = '';
-			value = today(getLocalTimeZone());
 		}
+		loading = false;
+		input_title = '';
+		value = today(getLocalTimeZone());
 	}
 </script>
 
