@@ -215,7 +215,6 @@
 					title: input_title.trim(),
 					text: input_text.trim(),
 					checked: false,
-					date: value.toString().split('T')[0],
 					deleted: false
 				})
 				.select();
@@ -343,21 +342,23 @@
 									(inputerror = 'You are not anonymous. Be mindful of what you input.')}
 								maxlength={100}
 							/>
-							<InputGroupAddon align="inline-end">
-								<DropdownMenu.Root>
-									<DropdownMenuTrigger>
-										<CalendarPlus color="black" />
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<Calendar
-											type="single"
-											bind:value
-											class="rounded-md border shadow-sm"
-											captionLayout="dropdown"
-										/>
-									</DropdownMenuContent>
-								</DropdownMenu.Root>
-							</InputGroupAddon>
+							{#if dashboard}
+								<InputGroupAddon align="inline-end">
+									<DropdownMenu.Root>
+										<DropdownMenuTrigger>
+											<CalendarPlus color="black" />
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<Calendar
+												type="single"
+												bind:value
+												class="rounded-md border shadow-sm"
+												captionLayout="dropdown"
+											/>
+										</DropdownMenuContent>
+									</DropdownMenu.Root>
+								</InputGroupAddon>
+							{/if}
 						</InputGroup.Root>
 					</Field.Field>
 					<Field.Field>
