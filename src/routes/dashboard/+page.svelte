@@ -182,7 +182,7 @@
 <div class="mt-5 mr-5 flex justify-end">
 	<Button onclick={() => signOut()}>Sign Out</Button>
 </div>
-<div class="grid w-1/2 grid-cols-1 place-self-center">
+<div class="mx-auto grid w-1/2 grid-cols-1">
 	<h6 class="text-7xl">Dashboard</h6>
 	<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
 	<Field.Set class="rounded-lg border-2 border-black p-10">
@@ -225,9 +225,9 @@
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
 			<div class="flex gap-2">
-				<SendHorizontal class="black scale-x-[-1]" onclick={() => dashboardRemove(item)} />
+				<SendHorizontal class="black mt-1 scale-x-[-1]" onclick={() => dashboardRemove(item)} />
 				<Checkbox
-					class="size-7 border-2 border-black"
+					class="mt-1 size-7 border-2 border-black"
 					id={item.item_id}
 					onCheckedChange={() => check(item)}
 					bind:checked={item.checked}
@@ -245,7 +245,7 @@
 					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
 				{/if}
 			</div>
-			<div class="ml-5 flex shrink-0 gap-5">
+			<div class="mt-1 ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
 					<DropdownMenuTrigger class="flex gap-1">
 						{item.date}
