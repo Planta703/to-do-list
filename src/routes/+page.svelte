@@ -402,6 +402,11 @@
 				</div>
 			</HoverCard.Content>
 		</HoverCard.Root>
+		{#if dashboard}
+			<h6 class="text-green-500">
+				Deleted items can always be recovered. Feel free to delete them if need be.
+			</h6>
+		{/if}
 		{#each list as item (item.item_id)}
 			<div class="my-5 flex justify-between">
 				<div class="flex items-start gap-2">

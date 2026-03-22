@@ -227,6 +227,9 @@
 		<p class="text-center text-xl text-red-500">{inputerror}</p>
 		<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button>
 	</Field.Set>
+	<h6 class="text-green-500">
+		Deleted items can always be recovered. Feel free to delete them if need be.
+	</h6>
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
 			<div class="flex gap-2">
