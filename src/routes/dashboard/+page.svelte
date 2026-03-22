@@ -234,7 +234,7 @@
 				/>
 				{#if !item.checked}
 					<Collapsible.Root>
-						<Collapsible.Trigger>
+						<Collapsible.Trigger class="cursor-pointer">
 							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl break-all hyphens-auto')}>
 								{item.title}
 							</p></Collapsible.Trigger
