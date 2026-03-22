@@ -245,6 +245,11 @@
 			.eq('item_id', item.item_id) // ← Add this: filter by primary key
 			.select(); // Optional: returns updated row(s)
 	}
+
+	function formatDate(dateStr: string) {
+		const [year, month, day] = dateStr.split('-');
+		return `${month}-${day}-${year}`;
+	}
 </script>
 
 {#if dashboard}
@@ -421,7 +426,7 @@
 				{/if}
 			</div>
 			<div class="flex gap-5">
-				{item.date}
+				{formatDate(item.date)}
 				{#if dashboard}
 					<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
 				{/if}

@@ -168,6 +168,11 @@
 	async function dashboardRemove(item: Item) {
 		await supabase.from('Items').update({ dashboard: false }).eq('item_id', item.item_id).select();
 	}
+
+	function formatDate(dateStr: string) {
+		const [year, month, day] = dateStr.split('-');
+		return `${month}-${day}-${year}`;
+	}
 </script>
 
 <NavigationMenu.Root class="flex-0">
@@ -255,7 +260,7 @@
 			<div class="ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
 					<DropdownMenuTrigger class="flex gap-1">
-						{item.date}
+						{formatDate(item.date)}
 						<ChevronDown color="black" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
