@@ -20,6 +20,7 @@
 	type Item = {
 		item_id: string;
 		user_id: string;
+		title: string;
 		text: string;
 		checked: boolean;
 		date: string;
@@ -67,14 +68,23 @@
 				const row = (payload.new ?? payload.old) as Item | null;
 				if (!row) return;
 
-				if (payload.eventType === 'INSERT') {
-					list = [...list, row];
-				} else if (payload.eventType === 'UPDATE') {
-					if (row.deleted || !row.dashboard) {
+				switch (payload.eventType) {
+					case 'INSERT':
+						list = [...list, row];
+						break;
+					case 'UPDATE':
+						if (row.deleted || !row.dashboard) {
+							list = list.filter((item) => item.item_id !== row.item_id);
+						} else {
+							list = list.map((item) => (item.item_id === row.item_id ? row : item));
+						}
+						break;
+					case 'DELETE':
 						list = list.filter((item) => item.item_id !== row.item_id);
-					} else {
-						list = list.map((item) => (item.item_id === row.item_id ? row : item));
-					}
+						break;
+
+					default:
+						break;
 				}
 			})
 			.subscribe();
@@ -137,10 +147,16 @@
 
 	async function itemsToList() {
 		if (!input_title.trim()) return;
+		if (!input_text.trim()) return;
 
 		await supabase
 			.from('Items')
-			.insert({ text: input_title.trim(), date: value.toString().split('T')[0], dashboard: true })
+			.insert({
+				title: input_text.trim(),
+				text: input_title.trim(),
+				date: value.toString().split('T')[0],
+				dashboard: true
+			})
 			.select();
 		input_title = '';
 		input_text = '';
@@ -173,7 +189,7 @@
 				<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
 				<InputGroup.Root class="h-15">
 					<InputGroup.Input
-						id="input-text"
+						id="input-title"
 						class="text-2xl!"
 						contenteditable="true"
 						bind:value={input_title}
@@ -198,13 +214,7 @@
 			</Field.Field>
 			<Field.Field>
 				<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-				<Textarea
-					class="text-xl! placeholder:text-xl placeholder:text-red-500"
-					id="input-text"
-					placeholder="Under Construction"
-					disabled
-					bind:value={input_text}
-				/>
+				<Textarea class="text-xl!" id="input-text" bind:value={input_text} />
 			</Field.Field>
 		</Field.Group>
 		<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button>

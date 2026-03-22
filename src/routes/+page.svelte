@@ -66,14 +66,23 @@
 				const row = (payload.new ?? payload.old) as Item | null;
 				if (!row) return;
 
-				if (payload.eventType === 'INSERT') {
-					list = [...list, row];
-				} else if (payload.eventType === 'UPDATE') {
-					if (row.deleted) {
+				switch (payload.eventType) {
+					case 'INSERT':
+						list = [...list, row];
+						break;
+					case 'UPDATE':
+						if (row.deleted) {
+							list = list.filter((item) => item.item_id !== row.item_id);
+						} else {
+							list = list.map((item) => (item.item_id === row.item_id ? row : item));
+						}
+						break;
+					case 'DELETE':
 						list = list.filter((item) => item.item_id !== row.item_id);
-					} else {
-						list = list.map((item) => (item.item_id === row.item_id ? row : item));
-					}
+						break;
+
+					default:
+						break;
 				}
 			})
 			.subscribe();
@@ -167,7 +176,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					text: `Title: ${input_title.trim()}; Description: ${input_title.trim()}`
+					text: `Title: ${input_title.trim()}; Description: ${input_text.trim()}`
 				})
 			});
 
