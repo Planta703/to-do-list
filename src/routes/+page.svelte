@@ -369,7 +369,7 @@
 					<Field.Field>
 						<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
 						<Textarea
-							class="text-xl!"
+							class="h-100 text-xl!"
 							id="input-text"
 							bind:value={input_text}
 							oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
@@ -384,6 +384,7 @@
 	{:else}
 		<h6 class="text-2xl">Please Sign In to Participate</h6>
 	{/if}
+	<h6 class="mt-5 text-4xl">Current List:</h6>
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
 			<div class="flex items-start gap-2">
