@@ -330,8 +330,8 @@
 	{/if}
 </div>
 <div class="mx-auto grid w-1/2 grid-cols-1">
-	<h6 class="text-7xl">Community</h6>
 	{#if currentUserId}
+		<h6 class="text-7xl">Community</h6>
 		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
 			{#if loading}
@@ -452,6 +452,13 @@
 			</div>
 		{/each}
 	{:else}
-		<h6 class="text-2xl">Please Sign In to Participate</h6>
+		<h6 class="mb-10 text-center text-2xl">
+			Ever been in the situation where you had a genius idea for our school but didn't know the best
+			way to reach our Student Senate?
+		</h6>
+		<h6 class="text-center text-2xl">
+			This is the tool for you! Reach Student Senate easily and share your ideas here!
+		</h6>
+		<h6 class="text-center text-2xl">Please sign in to participate.</h6>
 	{/if}
 </div>
