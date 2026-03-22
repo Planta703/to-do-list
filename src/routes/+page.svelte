@@ -386,7 +386,7 @@
 	{/if}
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
-			<div class="flex gap-2">
+			<div class="flex items-start gap-2">
 				{#if dashboard}
 					{#if !item.dashboard}
 						<AlertDialog.Root>
@@ -425,7 +425,7 @@
 					</p>
 				{/if}
 			</div>
-			<div class="flex gap-5">
+			<div class="flex shrink-0 gap-5">
 				{formatDate(item.date)}
 				{#if dashboard}
 					<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
