@@ -235,9 +235,18 @@
 				{#if !item.checked}
 					<Collapsible.Root>
 						<Collapsible.Trigger>
-							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
+							<p
+								class={cn(
+									item.checked ? 'line-through' : '',
+									'text-2xl',
+									'wrap-anywhere',
+									'hyphens-auto'
+								)}
+							>
+								{item.title}
+							</p>
 						</Collapsible.Trigger>
-						<Collapsible.Content>
+						<Collapsible.Content class="wrap-anywhere, text-xl hyphens-auto">
 							{item.text}
 						</Collapsible.Content>
 					</Collapsible.Root>
