@@ -235,14 +235,18 @@
 				{#if !item.checked}
 					<Collapsible.Root>
 						<Collapsible.Trigger>
-							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
-						</Collapsible.Trigger>
+							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl break-all hyphens-auto')}>
+								{item.title}
+							</p></Collapsible.Trigger
+						>
 						<Collapsible.Content>
-							{item.text}
+							<p class="text-xl break-all hyphens-auto">{item.text}</p>
 						</Collapsible.Content>
 					</Collapsible.Root>
 				{:else}
-					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
+					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl break-all hyphens-auto')}>
+						{item.title}
+					</p>
 				{/if}
 			</div>
 			<div class="mt-1 ml-5 flex shrink-0 gap-5">
