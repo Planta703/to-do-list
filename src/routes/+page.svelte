@@ -14,7 +14,7 @@
 	import Input from '@/components/ui/input/input.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
 	import { onMount, onDestroy } from 'svelte';
-	import { CalendarPlus, SendHorizontal, Check, CircleCheck } from '@lucide/svelte';
+	import { CalendarPlus, SendHorizontal, Check, CircleCheck, Trash2 } from '@lucide/svelte';
 	import { buttonVariants } from '@/components/ui/button/button.svelte';
 	import { cn } from '@/utils';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
@@ -237,6 +237,14 @@
 		input_text = '';
 		value = today(getLocalTimeZone());
 	}
+
+	async function deleteItem(item: Item) {
+		await supabase
+			.from('Items')
+			.update({ deleted: true })
+			.eq('item_id', item.item_id) // ← Add this: filter by primary key
+			.select(); // Optional: returns updated row(s)
+	}
 </script>
 
 {#if dashboard}
@@ -397,6 +405,9 @@
 			</div>
 			<div class="flex items-center gap-5">
 				{item.date}
+				{#if dashboard}
+					<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
+				{/if}
 			</div>
 		</div>
 	{/each}
