@@ -244,7 +244,7 @@
 									id="email"
 									bind:value={email}
 									oninput={() =>
-										(error_message = 'You are not anonymous. Be mindful of what you input.')}
+										(inputerror = 'You are not anonymous. Be mindful of what you input.')}
 									type="email"
 									autocomplete="on"
 								/>
@@ -336,7 +336,7 @@
 						placeholder="Under Construction"
 						disabled
 						bind:value={input_text}
-						oninput={() => (inputerror = '')}
+						oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
 					/>
 				</Field.Field>
 			</Field.Group>
