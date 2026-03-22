@@ -33,6 +33,7 @@
 	let input_title = $state('');
 	let currentUserId = $state('');
 	let input_text = $state('');
+	let inputerror = $state('');
 
 	supabase.auth.onAuthStateChange((event) => {
 		if (event === 'SIGNED_OUT') window.location.href = '/';
@@ -146,9 +147,14 @@
 	});
 
 	async function itemsToList() {
-		if (!input_title.trim()) return;
-		if (!input_text.trim()) return;
-
+		if (!input_title.trim()) {
+			inputerror = 'Please enter title!';
+			return;
+		}
+		if (!input_text.trim()) {
+			inputerror = 'Please enter description!';
+			return;
+		}
 		await supabase
 			.from('Items')
 			.insert({
@@ -182,6 +188,7 @@
 </div>
 <div class="mx-auto grid w-1/2 grid-cols-1">
 	<h6 class="font-chewy text-7xl">Dashboard</h6>
+	<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
 	<Field.Set class="rounded-lg border-2 border-black p-10">
 		<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
 		<Field.Group>

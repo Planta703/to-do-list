@@ -167,6 +167,14 @@
 	}
 
 	async function itemsToList() {
+		if (!input_title.trim()) {
+			inputerror = 'Please enter title!';
+			return;
+		}
+		if (!input_text.trim()) {
+			inputerror = 'Please enter description!';
+			return;
+		}
 		loading = true;
 
 		if (!dashboard) {
@@ -310,50 +318,53 @@
 		<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
 		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
-			<Field.Group>
-				<Field.Field>
-					<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
-					<InputGroup.Root class="h-15">
-						{#if loading}
-							<Spinner class="ml-5 size-5" />
-						{/if}
-						<InputGroup.Input
-							id="input-title"
-							class="text-2xl!"
-							contenteditable="true"
-							bind:value={input_title}
+			{#if loading}
+				<Spinner class="ml-5 size-30 place-self-center" />
+			{:else}
+				<Field.Group>
+					<Field.Field>
+						<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
+						<InputGroup.Root class="h-15">
+							<InputGroup.Input
+								id="input-title"
+								class="text-2xl!"
+								contenteditable="true"
+								bind:value={input_title}
+								oninput={() =>
+									(inputerror = 'You are not anonymous. Be mindful of what you input.')}
+								maxlength={100}
+							/>
+							<InputGroupAddon align="inline-end">
+								<DropdownMenu.Root>
+									<DropdownMenuTrigger>
+										<CalendarPlus color="black" />
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<Calendar
+											type="single"
+											bind:value
+											class="rounded-md border shadow-sm"
+											captionLayout="dropdown"
+										/>
+									</DropdownMenuContent>
+								</DropdownMenu.Root>
+							</InputGroupAddon>
+						</InputGroup.Root>
+					</Field.Field>
+					<Field.Field>
+						<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
+						<Textarea
+							class="text-xl!"
+							id="input-text"
+							bind:value={input_text}
 							oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
-							maxlength={100}
 						/>
-						<InputGroupAddon align="inline-end">
-							<DropdownMenu.Root>
-								<DropdownMenuTrigger>
-									<CalendarPlus color="black" />
-								</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<Calendar
-										type="single"
-										bind:value
-										class="rounded-md border shadow-sm"
-										captionLayout="dropdown"
-									/>
-								</DropdownMenuContent>
-							</DropdownMenu.Root>
-						</InputGroupAddon>
-					</InputGroup.Root>
-				</Field.Field>
-				<Field.Field>
-					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-					<Textarea
-						class="text-xl!"
-						id="input-text"
-						bind:value={input_text}
-						oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
-					/>
-				</Field.Field>
-			</Field.Group>
-			<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button
-			>
+					</Field.Field>
+				</Field.Group>
+				<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}
+					>Submit</Button
+				>
+			{/if}
 		</Field.Set>
 	{:else}
 		<h6 class="text-2xl">Please Sign In to Participate</h6>
