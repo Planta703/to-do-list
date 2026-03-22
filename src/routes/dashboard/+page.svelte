@@ -231,7 +231,7 @@
 			<div class="flex place-items-center gap-2">
 				<SendHorizontal class="black scale-x-[-1]" onclick={() => dashboardRemove(item)} />
 				<Checkbox
-					class="black size-7"
+					class="size-7 border-2 border-black"
 					id={item.item_id}
 					onCheckedChange={() => check(item)}
 					bind:checked={item.checked}
