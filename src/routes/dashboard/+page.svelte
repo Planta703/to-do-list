@@ -222,7 +222,7 @@
 			</Field.Field>
 			<Field.Field>
 				<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-				<Textarea class="text-xl!" id="input-text" bind:value={input_text} />
+				<Textarea class="h-100 text-xl!" id="input-text" bind:value={input_text} />
 			</Field.Field>
 		</Field.Group>
 		<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button>

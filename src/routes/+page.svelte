@@ -176,12 +176,8 @@
 	}
 
 	async function itemsToList() {
-		if (!input_title.trim()) {
-			inputerror = 'Please enter title!';
-			return;
-		}
-		if (!input_text.trim()) {
-			inputerror = 'Please enter description!';
+		if (!input_title.trim() || !input_text.trim()) {
+			inputerror = 'Please fill in all fields!';
 			return;
 		}
 		loading = true;
