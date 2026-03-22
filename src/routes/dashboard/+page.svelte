@@ -64,7 +64,7 @@
 
 		const subscription = supabase
 			.channel('public:Items')
-			.on('postgres_changes', { event: '*', schema: 'public', table: 'Items' }, (payload) => {
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'Items' }, async (payload) => {
 				const row = (payload.new ?? payload.old) as Item | null;
 				if (!row) return;
 
@@ -73,10 +73,18 @@
 						list = [...list, row];
 						break;
 					case 'UPDATE':
-						if (row.deleted || !row.dashboard) {
-							list = list.filter((item) => item.item_id !== row.item_id);
-						} else {
-							list = list.map((item) => (item.item_id === row.item_id ? row : item));
+						{
+							const id = (payload.new as Item).item_id;
+							const { data: fresh } = await supabase
+								.from('Items')
+								.select('*')
+								.eq('item_id', id)
+								.single();
+							if (!fresh || fresh.deleted || !fresh.dashboard) {
+								list = list.filter((item) => item.item_id !== id);
+							} else {
+								list = list.map((item) => (item.item_id === id ? fresh : item));
+							}
 						}
 						break;
 					case 'DELETE':
