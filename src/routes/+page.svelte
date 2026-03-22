@@ -14,7 +14,14 @@
 	import Input from '@/components/ui/input/input.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
 	import { onMount, onDestroy } from 'svelte';
-	import { CalendarPlus, SendHorizontal, Check, CircleCheck, Trash2 } from '@lucide/svelte';
+	import {
+		CalendarPlus,
+		SendHorizontal,
+		Check,
+		CircleCheck,
+		Trash2,
+		CircleDashed
+	} from '@lucide/svelte';
 	import { buttonVariants } from '@/components/ui/button/button.svelte';
 	import { cn } from '@/utils';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
@@ -22,6 +29,7 @@
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import Textarea from '@/components/ui/textarea/textarea.svelte';
 	import * as Collapsible from '@/components/ui/collapsible';
+	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 
 	type Item = {
 		item_id: string;
@@ -381,15 +389,27 @@
 				>
 			{/if}
 		</Field.Set>
-	{:else}
-		<h6 class="text-2xl">Please Sign In to Participate</h6>
-	{/if}
-	<h6 class="mt-5 text-4xl">Current List:</h6>
-	{#each list as item (item.item_id)}
-		<div class="my-5 flex justify-between">
-			<div class="flex items-start gap-2">
-				{#if dashboard}
-					{#if !item.dashboard}
+
+		<HoverCard.Root>
+			<HoverCard.Trigger class="mt-5 w-fit cursor-default text-4xl underline"
+				>Current List:</HoverCard.Trigger
+			>
+			<HoverCard.Content>
+				<div class="flex">
+					<CircleDashed color="black" />: Pending
+				</div>
+				<div class="flex">
+					<Check color="black" />: In Progress
+				</div>
+				<div class="flex">
+					<CircleCheck color="black" />: Completed
+				</div>
+			</HoverCard.Content>
+		</HoverCard.Root>
+		{#each list as item (item.item_id)}
+			<div class="my-5 flex justify-between">
+				<div class="flex items-start gap-2">
+					{#if dashboard && !item.dashboard}
 						<AlertDialog.Root>
 							<AlertDialog.Trigger>
 								<SendHorizontal color="black" class="mt-0.5" /></AlertDialog.Trigger
@@ -403,35 +423,39 @@
 								<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 							</AlertDialog.Content>
 						</AlertDialog.Root>
-					{:else if !item.checked}
-						<Check color="black" />
+					{/if}
+					{#if !item.checked}
+						{#if item.dashboard}
+							<Check class="shrink-0" color="black" />
+						{:else}
+							<CircleDashed class="shrink-0" color="black" />
+						{/if}
+						<Collapsible.Root>
+							<Collapsible.Trigger class="cursor-pointer">
+								<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+									{item.title}
+								</p></Collapsible.Trigger
+							>
+							<Collapsible.Content>
+								<p class="text-xl wrap-break-word">{item.text}</p>
+							</Collapsible.Content>
+						</Collapsible.Root>
 					{:else}
 						<CircleCheck color="black" class="mt-0.5" />
+						<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+							{item.title}
+						</p>
 					{/if}
-				{/if}
-				{#if !item.checked}
-					<Collapsible.Root>
-						<Collapsible.Trigger class="cursor-pointer">
-							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
-								{item.title}
-							</p></Collapsible.Trigger
-						>
-						<Collapsible.Content>
-							<p class="text-xl wrap-break-word">{item.text}</p>
-						</Collapsible.Content>
-					</Collapsible.Root>
-				{:else}
-					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
-						{item.title}
-					</p>
-				{/if}
+				</div>
+				<div class="flex shrink-0 gap-5">
+					{formatDate(item.date)}
+					{#if dashboard}
+						<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
+					{/if}
+				</div>
 			</div>
-			<div class="flex shrink-0 gap-5">
-				{formatDate(item.date)}
-				{#if dashboard}
-					<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
-				{/if}
-			</div>
-		</div>
-	{/each}
+		{/each}
+	{:else}
+		<h6 class="text-2xl">Please Sign In to Participate</h6>
+	{/if}
 </div>
