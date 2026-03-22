@@ -332,7 +332,6 @@
 <div class="mx-auto grid w-1/2 grid-cols-1">
 	<h6 class="text-7xl">Community</h6>
 	{#if currentUserId}
-		<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
 		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
 			{#if loading}
@@ -380,6 +379,7 @@
 						/>
 					</Field.Field>
 				</Field.Group>
+				<p class="text-center text-xl text-red-500">{inputerror}</p>
 				<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}
 					>Submit</Button
 				>
