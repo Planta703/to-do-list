@@ -166,7 +166,9 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ text: input_title.trim() })
+				body: JSON.stringify({
+					text: `Title: ${input_title.trim()}; Description: ${input_title.trim()}`
+				})
 			});
 
 			const result = await fetchresult.json();
@@ -192,7 +194,8 @@
 				.from('Items')
 				.insert({
 					item_id: crypto.randomUUID(),
-					text: input_title.trim(),
+					title: input_title.trim(),
+					text: input_text.trim(),
 					checked: false,
 					date: value.toString().split('T')[0],
 					deleted: false
@@ -203,7 +206,8 @@
 				.from('Items')
 				.insert({
 					item_id: crypto.randomUUID(),
-					text: input_title.trim(),
+					title: input_title.trim(),
+					text: input_text.trim(),
 					checked: false,
 					date: value.toString().split('T')[0],
 					deleted: false,
@@ -213,6 +217,7 @@
 		}
 		loading = false;
 		input_title = '';
+		input_text = '';
 		value = today(getLocalTimeZone());
 	}
 </script>
@@ -331,10 +336,8 @@
 				<Field.Field>
 					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
 					<Textarea
-						class="text-xl! placeholder:text-xl placeholder:text-red-500"
+						class="text-xl!"
 						id="input-text"
-						placeholder="Under Construction"
-						disabled
 						bind:value={input_text}
 						oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
 					/>
