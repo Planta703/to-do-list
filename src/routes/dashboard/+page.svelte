@@ -147,19 +147,15 @@
 	});
 
 	async function itemsToList() {
-		if (!input_title.trim()) {
-			inputerror = 'Please enter title!';
-			return;
-		}
-		if (!input_text.trim()) {
-			inputerror = 'Please enter description!';
+		if (!input_title.trim() || !input_text.trim()) {
+			inputerror = 'Please fill in all fields!';
 			return;
 		}
 		await supabase
 			.from('Items')
 			.insert({
-				title: input_text.trim(),
-				text: input_title.trim(),
+				title: input_title.trim(),
+				text: input_text.trim(),
 				date: value.toString().split('T')[0],
 				dashboard: true
 			})
