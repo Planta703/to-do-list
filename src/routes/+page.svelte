@@ -336,9 +336,7 @@
 				<Field.Field>
 					<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
 					<Textarea
-						class="text-xl! placeholder:text-xl! placeholder:text-red-500"
-						placeholder="Under Construction"
-						disabled
+						class="text-xl!"
 						id="input-text"
 						bind:value={input_text}
 						oninput={() => (inputerror = 'You are not anonymous. Be mindful of what you input.')}
