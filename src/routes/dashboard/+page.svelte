@@ -7,7 +7,6 @@
 	import { getLocalTimeZone, today, parseDate } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import Button from '@/components/ui/button/button.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
 	import { onMount, onDestroy } from 'svelte';
@@ -16,6 +15,7 @@
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import * as Field from '$lib/components/ui/field/index.js';
 	import { Textarea } from '@/components/ui/textarea';
+	import * as Collapsible from '@/components/ui/collapsible';
 
 	type Item = {
 		item_id: string;
@@ -182,8 +182,8 @@
 <div class="mt-5 mr-5 flex justify-end">
 	<Button onclick={() => signOut()}>Sign Out</Button>
 </div>
-<div class="mx-auto grid w-1/2 grid-cols-1">
-	<h6 class="font-chewy text-7xl">Dashboard</h6>
+<div class="grid w-1/2 grid-cols-1 place-self-center">
+	<h6 class="text-7xl">Dashboard</h6>
 	<p class="my-10 text-center text-xl text-red-500">{inputerror}</p>
 	<Field.Set class="rounded-lg border-2 border-black p-10">
 		<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
@@ -196,7 +196,7 @@
 						class="text-2xl!"
 						contenteditable="true"
 						bind:value={input_title}
-						maxlength={100}
+						maxlength={45}
 					/>
 					<InputGroupAddon align="inline-end">
 						<DropdownMenu.Root>
@@ -224,7 +224,7 @@
 	</Field.Set>
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
-			<div class="flex place-items-center gap-2">
+			<div class="flex gap-2">
 				<SendHorizontal class="black scale-x-[-1]" onclick={() => dashboardRemove(item)} />
 				<Checkbox
 					class="size-7 border-2 border-black"
@@ -232,13 +232,22 @@
 					onCheckedChange={() => check(item)}
 					bind:checked={item.checked}
 				/>
-				<Label for={item.item_id} class={cn(item.checked ? 'line-through' : '', 'text-2xl')}
-					>{item.text}</Label
-				>
+				{#if !item.checked}
+					<Collapsible.Root>
+						<Collapsible.Trigger>
+							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
+						</Collapsible.Trigger>
+						<Collapsible.Content>
+							{item.text}
+						</Collapsible.Content>
+					</Collapsible.Root>
+				{:else}
+					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.title}</p>
+				{/if}
 			</div>
-			<div class="flex items-center gap-5">
+			<div class="ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
-					<DropdownMenuTrigger class="flex items-center gap-1">
+					<DropdownMenuTrigger class="flex gap-1">
 						{item.date}
 						<ChevronDown color="black" />
 					</DropdownMenuTrigger>
