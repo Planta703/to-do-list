@@ -139,7 +139,7 @@
 		if (error) {
 			error_message = error.message;
 		} else {
-			email_sent = false;
+			email_sent = true;
 		}
 	}
 
