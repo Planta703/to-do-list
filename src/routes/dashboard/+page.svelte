@@ -226,11 +226,11 @@
 		<div class="my-5 flex justify-between">
 			<div class="flex gap-2">
 				<SendHorizontal
-					class="black mt-1 shrink-0 scale-x-[-1]"
+					class="black mt-0.5 shrink-0 scale-x-[-1]"
 					onclick={() => dashboardRemove(item)}
 				/>
 				<Checkbox
-					class="mt-1 size-7 border-2 border-black"
+					class="size-7 border-2 border-black"
 					id={item.item_id}
 					onCheckedChange={() => check(item)}
 					bind:checked={item.checked}
@@ -252,7 +252,7 @@
 					</p>
 				{/if}
 			</div>
-			<div class="mt-1 ml-5 flex shrink-0 gap-5">
+			<div class="ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
 					<DropdownMenuTrigger class="flex gap-1">
 						{item.date}

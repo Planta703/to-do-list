@@ -21,6 +21,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import Textarea from '@/components/ui/textarea/textarea.svelte';
+	import * as Collapsible from '@/components/ui/collapsible';
 
 	type Item = {
 		item_id: string;
@@ -379,12 +380,12 @@
 	{/if}
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
-			<div class="flex place-items-center gap-2">
+			<div class="flex gap-2">
 				{#if dashboard}
 					{#if !item.dashboard}
 						<AlertDialog.Root>
 							<AlertDialog.Trigger>
-								<SendHorizontal color="black" /></AlertDialog.Trigger
+								<SendHorizontal color="black" class="mt-0.5" /></AlertDialog.Trigger
 							>
 							<AlertDialog.Content>
 								<AlertDialog.Title class="text-center">Database Addition</AlertDialog.Title>
@@ -398,12 +399,27 @@
 					{:else if !item.checked}
 						<Check color="black" />
 					{:else}
-						<CircleCheck color="black" />
+						<CircleCheck color="black" class="mt-0.5" />
 					{/if}
 				{/if}
-				<p class={cn(item.checked ? 'line-through' : '', 'text-2xl')}>{item.text}</p>
+				{#if !item.checked}
+					<Collapsible.Root>
+						<Collapsible.Trigger class="cursor-pointer">
+							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+								{item.title}
+							</p></Collapsible.Trigger
+						>
+						<Collapsible.Content>
+							<p class="text-xl wrap-break-word">{item.text}</p>
+						</Collapsible.Content>
+					</Collapsible.Root>
+				{:else}
+					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+						{item.title}
+					</p>
+				{/if}
 			</div>
-			<div class="flex items-center gap-5">
+			<div class="flex gap-5">
 				{item.date}
 				{#if dashboard}
 					<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
