@@ -283,7 +283,7 @@
 									id="email"
 									bind:value={email}
 									oninput={() =>
-										(inputerror = 'You are not anonymous. Be mindful of what you input.')}
+										(erorr_message = '')}
 									type="email"
 									autocomplete="on"
 								/>
@@ -293,7 +293,7 @@
 								<Input
 									id="password"
 									bind:value={password}
-									onclick={() => (error_message = '')}
+									oninput={() => (error_message = '')}
 									type="password"
 									autocomplete="on"
 								/>
