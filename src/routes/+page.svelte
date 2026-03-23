@@ -128,6 +128,8 @@
 		});
 		if (error) {
 			error_message = error.message;
+		} else {
+			error_message = '';
 		}
 	}
 
@@ -140,6 +142,7 @@
 			error_message = error.message;
 		} else {
 			email_sent = true;
+			error_message = '';
 		}
 	}
 
