@@ -128,6 +128,8 @@
 		});
 		if (error) {
 			error_message = error.message;
+		} else {
+			error_message = '';
 		}
 	}
 
@@ -140,6 +142,7 @@
 			error_message = error.message;
 		} else {
 			email_sent = true;
+			error_message = '';
 		}
 	}
 
@@ -283,7 +286,7 @@
 									id="email"
 									bind:value={email}
 									oninput={() =>
-										(inputerror = 'You are not anonymous. Be mindful of what you input.')}
+										(erorr_message = '')}
 									type="email"
 									autocomplete="on"
 								/>
@@ -293,7 +296,7 @@
 								<Input
 									id="password"
 									bind:value={password}
-									onclick={() => (error_message = '')}
+									oninput={() => (error_message = '')}
 									type="password"
 									autocomplete="on"
 								/>
