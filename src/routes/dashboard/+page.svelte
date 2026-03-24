@@ -233,10 +233,12 @@
 	{#each list as item (item.item_id)}
 		<div class="my-5 flex justify-between">
 			<div class="flex gap-2">
-				<SendHorizontal
-					class="black mt-0.5 shrink-0 scale-x-[-1]"
-					onclick={() => dashboardRemove(item)}
-				/>
+				{#if !item.checked}
+					<SendHorizontal
+						class="black mt-0.5 shrink-0 scale-x-[-1]"
+						onclick={() => dashboardRemove(item)}
+					/>
+				{/if}
 				<Checkbox
 					class="size-7 border-2 border-black"
 					id={item.item_id}

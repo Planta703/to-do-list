@@ -285,8 +285,7 @@
 								<Input
 									id="email"
 									bind:value={email}
-									oninput={() =>
-										(erorr_message = '')}
+									oninput={() => (error_message = '')}
 									type="email"
 									autocomplete="on"
 								/>
