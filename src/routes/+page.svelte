@@ -418,7 +418,7 @@
 								<SendHorizontal color="black" class="mt-0.5" /></AlertDialog.Trigger
 							>
 							<AlertDialog.Content>
-								<AlertDialog.Title class="text-center">Database Addition</AlertDialog.Title>
+								<AlertDialog.Title class="text-center">Dashboard Addition</AlertDialog.Title>
 								<AlertDialog.Description class="text-center"
 									>Pressing Confirm below will move this item to the shared dashboard.</AlertDialog.Description
 								>
