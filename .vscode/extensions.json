@@ -1,8 +1,12 @@
 {
 	"recommendations": [
+		"Catppuccin.catppuccin-vsc",
+		"Catppuccin.catppuccin-vsc-icons",
 		"svelte.svelte-vscode",
 		"esbenp.prettier-vscode",
 		"dbaeumer.vscode-eslint",
-		"bradlc.vscode-tailwindcss"
+		"bradlc.vscode-tailwindcss",
+		"usernamehw.errorlens",
+		"wescottsharples.codeglow"
 	]
 }
