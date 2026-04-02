@@ -30,6 +30,7 @@
 	import Textarea from '@/components/ui/textarea/textarea.svelte';
 	import * as Collapsible from '@/components/ui/collapsible';
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	type Item = {
 		item_id: string;
@@ -333,6 +334,14 @@
 </div>
 <div class="mx-auto grid w-1/2 grid-cols-1">
 	{#if currentUserId}
+		<h6 class="text-center text-3xl">
+			If you are a member of Student Senate reach out to
+			<p class="bg-linear-to-r from-blue-400 to-blue-950 bg-clip-text p-5 text-transparent">
+				Abdul Khan the Legendary
+			</p>
+			for special access.
+		</h6>
+		<Separator class="my-4" />
 		<h6 class="text-7xl">Community</h6>
 		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
