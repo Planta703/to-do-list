@@ -334,6 +334,7 @@
 </div>
 <div class="mx-auto grid w-1/2 grid-cols-1">
 	{#if currentUserId}
+	{#if !dashboard}
 		<h6 class="text-center text-3xl">
 			If you are a member of Student Senate reach out to
 			<p class="bg-linear-to-r from-blue-400 to-blue-950 bg-clip-text p-5 text-transparent">
@@ -342,6 +343,7 @@
 			for special access.
 		</h6>
 		<Separator class="my-4" />
+		{/if}
 		<h6 class="text-7xl">Community</h6>
 		<Field.Set class="rounded-lg border-2 border-black p-10">
 			<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
