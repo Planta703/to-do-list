@@ -48,23 +48,40 @@
 	let inputerror = $state('You are not anonymous. Be mindful of what you input.');
 	let loading = $state(false);
 	let sortedList = $derived(
-		[...list].sort((a, b) => {
-			if (a.checked !== b.checked) {
-				return Number(a.checked) - Number(b.checked);
-			}
-			if (a.dashboard !== b.dashboard) {
-				return Number(b.dashboard) - Number(a.dashboard);
-			}
-			if (a.checked) {
-				if (a.date > b.date) return -1;
-				if (a.date < b.date) return 1;
-			} else {
-				if (a.date < b.date) return -1;
-				if (a.date > b.date) return 1;
-			}
+		[...list]
+			.filter((item) => item.dashboard === false)
+			.sort((a, b) => {
+				if (a.checked !== b.checked) {
+					return Number(a.checked) - Number(b.checked);
+				}
+				if (a.checked) {
+					if (a.date > b.date) return -1;
+					if (a.date < b.date) return 1;
+				} else {
+					if (a.date < b.date) return -1;
+					if (a.date > b.date) return 1;
+				}
 
-			return 0;
-		})
+				return 0;
+			})
+	);
+	let dashboardList = $derived(
+		[...list]
+			.filter((item) => item.dashboard === true)
+			.sort((a, b) => {
+				if (a.checked !== b.checked) {
+					return Number(a.checked) - Number(b.checked);
+				}
+				if (a.checked) {
+					if (a.date > b.date) return -1;
+					if (a.date < b.date) return 1;
+				} else {
+					if (a.date < b.date) return -1;
+					if (a.date > b.date) return 1;
+				}
+
+				return 0;
+			})
 	);
 
 	supabase.auth.onAuthStateChange((event) => {
@@ -420,10 +437,52 @@
 				Deleted items can always be recovered. Feel free to delete them if need be.
 			</h6>
 		{/if}
+		{#if dashboardList.length !== 0}
+			<Accordion.Root type="single">
+				<Accordion.Item>
+					<Accordion.Trigger class="text-3xl">In Progress</Accordion.Trigger>
+					<Accordion.Content>
+						{#each dashboardList as item (item.item_id)}
+							<div class="my-5 flex justify-between">
+								<div class="flex items-start gap-2">
+									{#if !item.checked}
+										<Check class="shrink-0" color="black" />
+										<Collapsible.Root>
+											<Collapsible.Trigger class="cursor-pointer">
+												<p
+													class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}
+												>
+													{item.title}
+												</p></Collapsible.Trigger
+											>
+											<Collapsible.Content>
+												<p class="text-xl wrap-break-word">{item.text}</p>
+											</Collapsible.Content>
+										</Collapsible.Root>
+									{:else}
+										<CircleCheck color="black" class="mt-0.5" />
+										<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+											{item.title}
+										</p>
+									{/if}
+								</div>
+								<div class="flex shrink-0 gap-5">
+									{formatDate(item.date)}
+									{#if dashboard}
+										<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</Accordion.Content>
+				</Accordion.Item>
+			</Accordion.Root>
+			<Separator />
+		{/if}
 		{#each sortedList as item (item.item_id)}
 			<div class="my-5 flex justify-between">
 				<div class="flex items-start gap-2">
-					{#if dashboard && !item.dashboard}
+					{#if dashboard}
 						<AlertDialog.Root>
 							<AlertDialog.Trigger>
 								<SendHorizontal color="black" class="mt-0.5" /></AlertDialog.Trigger
@@ -439,11 +498,7 @@
 						</AlertDialog.Root>
 					{/if}
 					{#if !item.checked}
-						{#if item.dashboard}
-							<Check class="shrink-0" color="black" />
-						{:else}
-							<CircleDashed class="shrink-0" color="black" />
-						{/if}
+						<CircleDashed class="shrink-0" color="black" />
 						<Collapsible.Root>
 							<Collapsible.Trigger class="cursor-pointer">
 								<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
