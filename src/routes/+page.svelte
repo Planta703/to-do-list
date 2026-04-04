@@ -1,8 +1,6 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import DropdownMenuContent from '@/components/ui/dropdown-menu/dropdown-menu-content.svelte';
-	import DropdownMenuTrigger from '@/components/ui/dropdown-menu/dropdown-menu-trigger.svelte';
 	import InputGroupAddon from '@/components/ui/input-group/input-group-addon.svelte';
 	import { getLocalTimeZone, today } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
@@ -33,7 +31,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { type Database } from '$lib/types/database';
 
-	type Item = Database['public']['Tables']['Items']['Row']
+	type Item = Database['public']['Tables']['Items']['Row'];
 
 	let value = $state(today(getLocalTimeZone()));
 	let list = $state<Item[]>([]); // keep the list as reactive state
@@ -48,14 +46,45 @@
 	let email_sent = $state(false);
 	let inputerror = $state('You are not anonymous. Be mindful of what you input.');
 	let loading = $state(false);
+	let sortedList = $derived(
+		[...list].sort((a, b) => {
+			const aDate = a.date ?? '';
+			const bDate = b.date ?? '';
+			if (a.checked !== b.checked) {
+				return Number(a.checked) - Number(b.checked);
+			}
+			if (a.dashboard !== b.dashboard) {
+				return Number(b.dashboard) - Number(a.dashboard);
+			}
+			if (a.checked) {
+				if (aDate > bDate) return -1;
+				if (aDate < bDate) return 1;
+			} else {
+				if (aDate < bDate) return -1;
+				if (aDate > bDate) return 1;
+			}
+
+			return 0;
+		})
+	);
 
 	supabase.auth.onAuthStateChange((event) => {
-		if (event === 'SIGNED_IN') userId();
-		loadItems();
-		inputerror = 'You are not anonymous. Be mindful of what you input.';
-		if (event === 'SIGNED_OUT') currentUserId = '';
-		list = [];
-		dashboard = false;
+		switch (event) {
+			case 'SIGNED_IN': {
+				userId();
+				loadItems();
+				inputerror = 'You are not anonymous. Be mindful of what you input.';
+				break;
+			}
+			case 'SIGNED_OUT': {
+				currentUserId = '';
+				list = [];
+				dashboard = false;
+				break;
+			}
+			default:
+				break;
+		}
 	});
 
 	onMount(async () => {
@@ -142,26 +171,6 @@
 	async function signOut() {
 		await supabase.auth.signOut({ scope: 'local' });
 	}
-
-	$effect(() => {
-		list.sort((a, b) => {
-			if (a.checked !== b.checked) {
-				return Number(a.checked) - Number(b.checked);
-			}
-			if (a.dashboard !== b.dashboard) {
-				return Number(b.dashboard) - Number(a.dashboard);
-			}
-			if (a.checked) {
-				if (a.date > b.date) return -1;
-				if (a.date < b.date) return 1;
-			} else {
-				if (a.date < b.date) return -1;
-				if (a.date > b.date) return 1;
-			}
-
-			return 0;
-		});
-	});
 
 	async function dashboardAdd(item: Item) {
 		await supabase
@@ -358,17 +367,17 @@
 							{#if dashboard}
 								<InputGroupAddon align="inline-end">
 									<DropdownMenu.Root>
-										<DropdownMenuTrigger>
+										<DropdownMenu.Trigger>
 											<CalendarPlus color="black" />
-										</DropdownMenuTrigger>
-										<DropdownMenuContent>
+										</DropdownMenu.Trigger>
+										<DropdownMenu.Content>
 											<Calendar
 												type="single"
 												bind:value
 												class="rounded-md border shadow-sm"
 												captionLayout="dropdown"
 											/>
-										</DropdownMenuContent>
+										</DropdownMenu.Content>
 									</DropdownMenu.Root>
 								</InputGroupAddon>
 							{/if}
@@ -412,7 +421,7 @@
 				Deleted items can always be recovered. Feel free to delete them if need be.
 			</h6>
 		{/if}
-		{#each list as item (item.item_id)}
+		{#each sortedList as item (item.item_id)}
 			<div class="my-5 flex justify-between">
 				<div class="flex items-start gap-2">
 					{#if dashboard && !item.dashboard}
@@ -454,7 +463,7 @@
 					{/if}
 				</div>
 				<div class="flex shrink-0 gap-5">
-					{formatDate(item.date)}
+					{item.date ? formatDate(item.date) : 'No date'}
 					{#if dashboard}
 						<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
 					{/if}
@@ -470,5 +479,13 @@
 			This is the tool for you! Reach Student Senate easily and share your ideas here!
 		</h6>
 		<h6 class="text-center text-2xl">Please sign in to participate.</h6>
+		<Separator class="my-4" />
+		<h6 class="text-center text-xl">
+			If you are a member of Student Senate reach out to
+			<p class="bg-linear-to-r from-blue-400 to-blue-950 bg-clip-text text-transparent">
+				Abdul Khan the Legendary
+			</p>
+			for special access.
+		</h6>
 	{/if}
 </div>
