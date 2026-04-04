@@ -16,34 +16,34 @@ export type Database = {
     Tables: {
       Items: {
         Row: {
-          checked: boolean | null
-          dashboard: boolean | null
-          date: string | null
-          deleted: boolean | null
+          checked: boolean
+          dashboard: boolean
+          date: string
+          deleted: boolean
           item_id: string
           text: string
           title: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          checked?: boolean | null
-          dashboard?: boolean | null
-          date?: string | null
-          deleted?: boolean | null
+          checked?: boolean
+          dashboard?: boolean
+          date?: string
+          deleted?: boolean
           item_id?: string
           text: string
           title: string
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
-          checked?: boolean | null
-          dashboard?: boolean | null
-          date?: string | null
-          deleted?: boolean | null
+          checked?: boolean
+          dashboard?: boolean
+          date?: string
+          deleted?: boolean
           item_id?: string
           text?: string
           title?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -53,37 +53,37 @@ export type Database = {
           created_at: string
           display_name: string
           message_id: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           content: string
           created_at?: string
           display_name: string
           message_id?: string
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           content?: string
           created_at?: string
           display_name?: string
           message_id?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
       users: {
         Row: {
-          display_name: string | null
+          display_name: string
           type: string
           user_id: string
         }
         Insert: {
-          display_name?: string | null
+          display_name: string
           type: string
           user_id?: string
         }
         Update: {
-          display_name?: string | null
+          display_name?: string
           type?: string
           user_id?: string
         }

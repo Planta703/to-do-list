@@ -29,18 +29,16 @@
 	let inputerror = $state('');
 	let sortedList = $derived(
 		[...list].sort((a, b) => {
-			const aDate = a.date ?? '';
-			const bDate = b.date ?? '';
 			if (a.checked !== b.checked) {
 				return Number(a.checked) - Number(b.checked);
 			}
 
 			if (a.checked) {
-				if (aDate > bDate) return -1;
-				if (aDate < bDate) return 1;
+				if (a.date > b.date) return -1;
+				if (a.date < b.date) return 1;
 			} else {
-				if (aDate < bDate) return -1;
-				if (aDate > bDate) return 1;
+				if (a.date < b.date) return -1;
+				if (a.date > b.date) return 1;
 			}
 
 			return 0;
@@ -219,7 +217,7 @@
 						item.checked = val;
 						check(item);
 					}}
-					checked={item.checked ?? false}
+					bind:checked={item.checked}
 				/>
 				{#if !item.checked}
 					<Collapsible.Root>
@@ -241,13 +239,13 @@
 			<div class="ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
 					<DropdownMenuTrigger class="flex gap-1">
-						{item.date ? formatDate(item.date) : 'No Date'}
+						{formatDate(item.date)}
 						<ChevronDown color="black" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<Calendar
 							type="single"
-							value={item.date ? parseDate(item.date) : undefined}
+							value={parseDate(item.date)}
 							onValueChange={(newVal) => {
 								if (newVal) item.date = newVal.toString();
 								updateDate(item);

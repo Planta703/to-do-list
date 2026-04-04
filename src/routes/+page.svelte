@@ -30,6 +30,7 @@
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { type Database } from '$lib/types/database';
+	import * as Accordion from '$lib/components/ui/accordion/index.js';
 
 	type Item = Database['public']['Tables']['Items']['Row'];
 
@@ -48,8 +49,6 @@
 	let loading = $state(false);
 	let sortedList = $derived(
 		[...list].sort((a, b) => {
-			const aDate = a.date ?? '';
-			const bDate = b.date ?? '';
 			if (a.checked !== b.checked) {
 				return Number(a.checked) - Number(b.checked);
 			}
@@ -57,11 +56,11 @@
 				return Number(b.dashboard) - Number(a.dashboard);
 			}
 			if (a.checked) {
-				if (aDate > bDate) return -1;
-				if (aDate < bDate) return 1;
+				if (a.date > b.date) return -1;
+				if (a.date < b.date) return 1;
 			} else {
-				if (aDate < bDate) return -1;
-				if (aDate > bDate) return 1;
+				if (a.date < b.date) return -1;
+				if (a.date > b.date) return 1;
 			}
 
 			return 0;
@@ -463,7 +462,7 @@
 					{/if}
 				</div>
 				<div class="flex shrink-0 gap-5">
-					{item.date ? formatDate(item.date) : 'No date'}
+					{formatDate(item.date)}
 					{#if dashboard}
 						<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
 					{/if}
