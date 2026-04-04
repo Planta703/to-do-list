@@ -16,51 +16,42 @@
 	import * as Field from '$lib/components/ui/field/index.js';
 	import { Textarea } from '@/components/ui/textarea';
 	import * as Collapsible from '@/components/ui/collapsible';
+	import { type Database } from '$lib/types/database';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
-	type Item = {
-		item_id: string;
-		user_id: string;
-		title: string;
-		text: string;
-		checked: boolean;
-		date: string;
-		deleted: boolean;
-		dashboard: boolean;
-	};
+	type Item = Database['public']['Tables']['Items']['Row'];
 
 	let value = $state(today(getLocalTimeZone()));
 	let list = $state<Item[]>([]); // keep the list as reactive state
 	let input_title = $state('');
-	let currentUserId = $state('');
 	let input_text = $state('');
 	let inputerror = $state('');
+	let sortedList = $derived(
+		[...list].sort((a, b) => {
+			const aDate = a.date ?? '';
+			const bDate = b.date ?? '';
+			if (a.checked !== b.checked) {
+				return Number(a.checked) - Number(b.checked);
+			}
+
+			if (a.checked) {
+				if (aDate > bDate) return -1;
+				if (aDate < bDate) return 1;
+			} else {
+				if (aDate < bDate) return -1;
+				if (aDate > bDate) return 1;
+			}
+
+			return 0;
+		})
+	);
 
 	supabase.auth.onAuthStateChange((event) => {
-		if (event === 'SIGNED_OUT') window.location.href = '/';
+		if (event === 'SIGNED_OUT') goto(resolve('/'));
 	});
 
-	async function accountPresent() {
-		const {
-			data: { user }
-		} = await supabase.auth.getUser();
-		if (!user) {
-			window.location.href = '/';
-			return;
-		} else {
-			currentUserId = user.id;
-			const { data: userData } = await supabase
-				.from('users')
-				.select('*')
-				.eq('type', 'dashboard')
-				.eq('user_id', currentUserId);
-			if (!userData || userData.length === 0) {
-				window.location.href = '/';
-			}
-		}
-	}
-
 	onMount(() => {
-		accountPresent();
 		loadItems();
 
 		const subscription = supabase
@@ -127,24 +118,6 @@
 	async function signOut() {
 		await supabase.auth.signOut({ scope: 'local' });
 	}
-
-	$effect(() => {
-		list.sort((a, b) => {
-			if (a.checked !== b.checked) {
-				return Number(a.checked) - Number(b.checked);
-			}
-
-			if (a.checked) {
-				if (a.date > b.date) return -1;
-				if (a.date < b.date) return 1;
-			} else {
-				if (a.date < b.date) return -1;
-				if (a.date > b.date) return 1;
-			}
-
-			return 0;
-		});
-	});
 
 	async function itemsToList() {
 		if (!input_title.trim() || !input_text.trim()) {
@@ -230,7 +203,7 @@
 	<h6 class="text-green-500">
 		Deleted items can always be recovered. Feel free to delete them if need be.
 	</h6>
-	{#each list as item (item.item_id)}
+	{#each sortedList as item (item.item_id)}
 		<div class="my-5 flex justify-between">
 			<div class="flex gap-2">
 				{#if !item.checked}
@@ -242,8 +215,11 @@
 				<Checkbox
 					class="size-7 border-2 border-black"
 					id={item.item_id}
-					onCheckedChange={() => check(item)}
-					bind:checked={item.checked}
+					onCheckedChange={(val) => {
+						item.checked = val;
+						check(item);
+					}}
+					checked={item.checked ?? false}
 				/>
 				{#if !item.checked}
 					<Collapsible.Root>
@@ -265,13 +241,13 @@
 			<div class="ml-5 flex shrink-0 gap-5">
 				<DropdownMenu.Root>
 					<DropdownMenuTrigger class="flex gap-1">
-						{formatDate(item.date)}
+						{item.date ? formatDate(item.date) : 'No Date'}
 						<ChevronDown color="black" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<Calendar
 							type="single"
-							value={parseDate(item.date)}
+							value={item.date ? parseDate(item.date) : undefined}
 							onValueChange={(newVal) => {
 								if (newVal) item.date = newVal.toString();
 								updateDate(item);
