@@ -11,7 +11,7 @@
 	import Button from '@/components/ui/button/button.svelte';
 	import Input from '@/components/ui/input/input.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		CalendarPlus,
 		SendHorizontal,
@@ -103,9 +103,9 @@
 		}
 	});
 
-	onMount(async () => {
+	onMount(() => {
 		loadItems();
-		await userId();
+		userId();
 
 		const subscription = supabase
 			.channel('public:Items')
@@ -134,9 +134,7 @@
 			})
 			.subscribe();
 
-		onDestroy(() => {
-			supabase.removeChannel(subscription);
-		});
+		return () => supabase.removeChannel(subscription);
 	});
 
 	async function loadItems() {

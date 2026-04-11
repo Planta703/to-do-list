@@ -9,7 +9,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import Button from '@/components/ui/button/button.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { CalendarPlus, ChevronDown, Trash2, SendHorizontal } from '@lucide/svelte';
 	import { cn } from '@/utils';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
@@ -19,6 +19,8 @@
 	import { type Database } from '$lib/types/database';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import AppSidebar from '$lib/components/app-sidebar.svelte';
 
 	type Item = Database['public']['Tables']['Items']['Row'];
 
@@ -79,9 +81,7 @@
 			})
 			.subscribe();
 
-		onDestroy(() => {
-			supabase.removeChannel(subscription);
-		});
+		return () => supabase.removeChannel(subscription);
 	});
 
 	async function loadItems() {
@@ -155,108 +155,118 @@
 		</NavigationMenu.Item>
 	</NavigationMenu.List>
 </NavigationMenu.Root>
-<div class="mt-5 mr-5 flex justify-end">
-	<Button onclick={() => signOut()}>Sign Out</Button>
-</div>
-<div class="mx-auto grid w-1/2 grid-cols-1">
-	<h6 class="text-7xl">Dashboard</h6>
-	<Field.Set class="rounded-lg border-2 border-black p-10">
-		<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
-		<Field.Group>
-			<Field.Field>
-				<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
-				<InputGroup.Root class="h-15">
-					<InputGroup.Input
-						id="input-title"
-						class="text-2xl!"
-						contenteditable="true"
-						bind:value={input_title}
-						maxlength={45}
-					/>
-					<InputGroupAddon align="inline-end">
+<Sidebar.Provider>
+	<main class="w-full">
+		<div class="flex place-items-center justify-end">
+			<div class="flex">
+				<Button onclick={() => signOut()}>Sign Out</Button>
+			</div>
+			<Sidebar.Trigger variant="default"></Sidebar.Trigger>
+		</div>
+		<div class="mx-auto grid w-1/2 grid-cols-1">
+			<h6 class="text-7xl">Dashboard</h6>
+			<Field.Set class="rounded-lg border-2 border-black p-10">
+				<Field.Legend class="text-4xl!">Share your idea!</Field.Legend>
+				<Field.Group>
+					<Field.Field>
+						<Field.Label for="input-title" class="text-3xl">Title</Field.Label>
+						<InputGroup.Root class="h-15">
+							<InputGroup.Input
+								id="input-title"
+								class="text-2xl!"
+								contenteditable="true"
+								bind:value={input_title}
+								maxlength={45}
+							/>
+							<InputGroupAddon align="inline-end">
+								<DropdownMenu.Root>
+									<DropdownMenuTrigger>
+										<CalendarPlus color="black" />
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<Calendar
+											type="single"
+											bind:value
+											class="rounded-md border shadow-sm"
+											captionLayout="dropdown"
+										/>
+									</DropdownMenuContent>
+								</DropdownMenu.Root>
+							</InputGroupAddon>
+						</InputGroup.Root>
+					</Field.Field>
+					<Field.Field>
+						<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
+						<Textarea class="h-100 text-xl!" id="input-text" bind:value={input_text} />
+					</Field.Field>
+				</Field.Group>
+				<p class="text-center text-xl text-red-500">{inputerror}</p>
+				<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}
+					>Submit</Button
+				>
+			</Field.Set>
+			<h6 class="text-green-500">
+				Deleted items can always be recovered. Feel free to delete them if need be.
+			</h6>
+			{#each sortedList as item (item.item_id)}
+				<div class="my-5 flex justify-between">
+					<div class="flex gap-2">
+						{#if !item.checked}
+							<SendHorizontal
+								class="black mt-0.5 shrink-0 scale-x-[-1]"
+								onclick={() => dashboardRemove(item)}
+							/>
+						{/if}
+						<Checkbox
+							class="size-7 border-2 border-black"
+							id={item.item_id}
+							onCheckedChange={(val) => {
+								item.checked = val;
+								check(item);
+							}}
+							bind:checked={item.checked}
+						/>
+						{#if !item.checked}
+							<Collapsible.Root>
+								<Collapsible.Trigger class="cursor-pointer">
+									<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+										{item.title}
+									</p></Collapsible.Trigger
+								>
+								<Collapsible.Content>
+									<p class="text-xl wrap-break-word">{item.text}</p>
+								</Collapsible.Content>
+							</Collapsible.Root>
+						{:else}
+							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
+								{item.title}
+							</p>
+						{/if}
+					</div>
+					<div class="ml-5 flex shrink-0 gap-5">
 						<DropdownMenu.Root>
-							<DropdownMenuTrigger>
-								<CalendarPlus color="black" />
+							<DropdownMenuTrigger class="flex gap-1">
+								{formatDate(item.date)}
+								<ChevronDown color="black" />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent>
 								<Calendar
 									type="single"
-									bind:value
+									value={parseDate(item.date)}
+									onValueChange={(newVal) => {
+										if (newVal) item.date = newVal.toString();
+										updateDate(item);
+									}}
 									class="rounded-md border shadow-sm"
 									captionLayout="dropdown"
 								/>
 							</DropdownMenuContent>
 						</DropdownMenu.Root>
-					</InputGroupAddon>
-				</InputGroup.Root>
-			</Field.Field>
-			<Field.Field>
-				<Field.Label for="input-text" class="text-3xl">Description</Field.Label>
-				<Textarea class="h-100 text-xl!" id="input-text" bind:value={input_text} />
-			</Field.Field>
-		</Field.Group>
-		<p class="text-center text-xl text-red-500">{inputerror}</p>
-		<Button class="flex h-10 w-30 place-self-center text-3xl" onclick={itemsToList}>Submit</Button>
-	</Field.Set>
-	<h6 class="text-green-500">
-		Deleted items can always be recovered. Feel free to delete them if need be.
-	</h6>
-	{#each sortedList as item (item.item_id)}
-		<div class="my-5 flex justify-between">
-			<div class="flex gap-2">
-				{#if !item.checked}
-					<SendHorizontal
-						class="black mt-0.5 shrink-0 scale-x-[-1]"
-						onclick={() => dashboardRemove(item)}
-					/>
-				{/if}
-				<Checkbox
-					class="size-7 border-2 border-black"
-					id={item.item_id}
-					onCheckedChange={(val) => {
-						item.checked = val;
-						check(item);
-					}}
-					bind:checked={item.checked}
-				/>
-				{#if !item.checked}
-					<Collapsible.Root>
-						<Collapsible.Trigger class="cursor-pointer">
-							<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
-								{item.title}
-							</p></Collapsible.Trigger
-						>
-						<Collapsible.Content>
-							<p class="text-xl wrap-break-word">{item.text}</p>
-						</Collapsible.Content>
-					</Collapsible.Root>
-				{:else}
-					<p class={cn(item.checked ? 'line-through' : '', 'text-2xl wrap-break-word')}>
-						{item.title}
-					</p>
-				{/if}
-			</div>
-			<div class="ml-5 flex shrink-0 gap-5">
-				<DropdownMenu.Root>
-					<DropdownMenuTrigger class="flex gap-1">
-						{formatDate(item.date)}
-						<ChevronDown color="black" />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<Calendar
-							type="single"
-							value={parseDate(item.date)}
-							onValueChange={(newVal) => {
-								if (newVal) item.date = newVal.toString();
-								updateDate(item);
-							}}
-							class="rounded-md border shadow-sm"
-							captionLayout="dropdown"
-						/>
-					</DropdownMenuContent>
-				</DropdownMenu.Root>
-				<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
-			</div>
+						<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
+					</div>
+				</div>
+			{/each}
 		</div>
-	{/each}
-</div>
+	</main>
+	<AppSidebar />
+</Sidebar.Provider>
