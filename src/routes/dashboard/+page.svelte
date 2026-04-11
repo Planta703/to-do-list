@@ -10,7 +10,7 @@
 	import Button from '@/components/ui/button/button.svelte';
 	import { supabase } from '$lib/supabaseClient.js';
 	import { onMount } from 'svelte';
-	import { CalendarPlus, ChevronDown, Trash2, SendHorizontal } from '@lucide/svelte';
+	import { CalendarPlus, ChevronDown, Trash2, SendHorizontal, MessageCircle } from '@lucide/svelte';
 	import { cn } from '@/utils';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import * as Field from '$lib/components/ui/field/index.js';
@@ -157,11 +157,11 @@
 </NavigationMenu.Root>
 <Sidebar.Provider>
 	<main class="w-full">
-		<div class="flex place-items-center justify-end">
-			<div class="flex">
-				<Button onclick={() => signOut()}>Sign Out</Button>
-			</div>
-			<Sidebar.Trigger variant="default"></Sidebar.Trigger>
+		<div class="flex justify-end">
+			<Button onclick={() => signOut()}>Sign Out</Button>
+			<Sidebar.Trigger class="mx-5" size="default"
+				><MessageCircle color="black" size={32} /></Sidebar.Trigger
+			>
 		</div>
 		<div class="mx-auto grid w-1/2 grid-cols-1">
 			<h6 class="text-7xl">Dashboard</h6>

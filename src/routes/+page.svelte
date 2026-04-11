@@ -5,7 +5,6 @@
 	import { getLocalTimeZone, today } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import DialogTrigger from '@/components/ui/dialog/dialog-trigger.svelte';
 	import DialogContent from '@/components/ui/dialog/dialog-content.svelte';
 	import * as Field from '$lib/components/ui/field/index.js';
 	import Button from '@/components/ui/button/button.svelte';
@@ -289,9 +288,9 @@
 <div class="mt-5 mr-5 flex justify-end">
 	{#if !currentUserId}
 		<Dialog.Root>
-			<DialogTrigger class={buttonVariants({ variant: 'default' })} type="button">
+			<Dialog.Trigger class={buttonVariants({ variant: 'default' })} type="button">
 				Sign In!
-			</DialogTrigger>
+			</Dialog.Trigger>
 			<DialogContent>
 				{#if !email_sent}
 					<form>
