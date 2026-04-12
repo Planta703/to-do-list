@@ -28,7 +28,7 @@
 	import * as Collapsible from '@/components/ui/collapsible';
 	import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { type Database } from '$lib/types/database';
+	import { type Database } from '$lib/types/database.types';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 
 	type Item = Database['public']['Tables']['Items']['Row'];

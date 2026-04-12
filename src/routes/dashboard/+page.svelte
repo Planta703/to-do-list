@@ -16,11 +16,12 @@
 	import * as Field from '$lib/components/ui/field/index.js';
 	import { Textarea } from '@/components/ui/textarea';
 	import * as Collapsible from '@/components/ui/collapsible';
-	import { type Database } from '$lib/types/database';
+	import { type Database } from '$lib/types/database.types';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	type Item = Database['public']['Tables']['Items']['Row'];
 
@@ -157,11 +158,12 @@
 </NavigationMenu.Root>
 <Sidebar.Provider>
 	<main class="w-full">
-		<div class="flex justify-end">
-			<Button onclick={() => signOut()}>Sign Out</Button>
-			<Sidebar.Trigger class="mx-5" size="default"
-				><MessageCircle color="black" size={32} /></Sidebar.Trigger
+		<div class="mr-5 flex place-items-center justify-end">
+			<Sidebar.Trigger class="size-auto"
+				><MessageCircle color="black" class="size-7" /></Sidebar.Trigger
 			>
+			<Separator orientation="vertical" class="mx-5 px-0.5 py-5" />
+			<Button onclick={() => signOut()}>Sign Out</Button>
 		</div>
 		<div class="mx-auto grid w-1/2 grid-cols-1">
 			<h6 class="text-7xl">Dashboard</h6>
