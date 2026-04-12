@@ -7,6 +7,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { MessageCirclePlus, ArrowDown } from '@lucide/svelte';
 	import { type Database } from '$lib/types/database.types';
+	import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 	type Message = Database['public']['Tables']['Messages']['Row'];
 
@@ -54,11 +55,11 @@
 		await userData();
 		supabase
 			.channel('Messages')
-			.on(
+			.on<Message>(
 				'postgres_changes',
 				{ event: 'INSERT', schema: 'public', table: 'Messages' },
-				(payload: { new?: Message }) => {
-					const row = payload.new ?? null;
+				(payload: RealtimePostgresInsertPayload<Message>) => {
+					const row = payload.new;
 					if (!row) return;
 					messages = [...messages, row];
 					getDisplayNames(row.user_id);
