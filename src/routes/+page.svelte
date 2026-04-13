@@ -33,6 +33,7 @@
 
 	type Item = Database['public']['Tables']['Items']['Row'];
 
+	let email_warning = $state(false);
 	let value = $state(today(getLocalTimeZone()));
 	let list = $state<Item[]>([]); // keep the list as reactive state
 	let input_title = $state('');
@@ -292,7 +293,15 @@
 				Sign In!
 			</Dialog.Trigger>
 			<DialogContent>
-				{#if !email_sent}
+				{#if email_warning}
+					<p class="text-center text-3xl">
+						When registering for an account, school emails work, but may have a delay before the
+						confirmation email is in your inbox.
+					</p>
+					<Button class="flex place-self-center" onclick={() => (email_warning = !email_warning)}
+						>Alright</Button
+					>
+				{:else if !email_sent}
 					<form>
 						<Field.Group>
 							<Field.Field>
@@ -329,7 +338,15 @@
 							{/if}
 						</Field.Group>
 					</form>
-					<button class="flex place-self-center" onclick={() => (signin = !signin)}>
+					<button
+						class="flex place-self-center"
+						onclick={() => {
+							signin = !signin;
+							if (signin === false) {
+								email_warning = true;
+							}
+						}}
+					>
 						<p class="hover:cursor-pointer">
 							{signin ? "Don't have an account?" : 'Have an account?'}
 						</p>
