@@ -16,7 +16,6 @@
 	let user_id = $state('');
 	let messagesContainer: HTMLDivElement;
 	let isAtBottom = $state(true);
-	let account1 = $state(false);
 	let displayNames: Record<string, string> = $state({});
 
 	async function getDisplayNames(userId: string) {
@@ -84,24 +83,6 @@
 		return scrollHeight - scrollTop - clientHeight < 50;
 	}
 
-	async function account() {
-		if (!account1) {
-			await supabase.auth.signOut();
-			await supabase.auth.signInWithPassword({
-				email: 'amuqtk@gmail.com',
-				password: 'leakyfaucet'
-			});
-			account1 = true;
-		} else {
-			await supabase.auth.signOut();
-			await supabase.auth.signInWithPassword({
-				email: 'amuqtk1@gmail.com',
-				password: 'leakyfaucet'
-			});
-			account1 = false;
-		}
-	}
-
 	function handleScroll() {
 		isAtBottom = checkIfAtBottom();
 	}
@@ -139,7 +120,6 @@
 <Sidebar.Root side="right">
 	<Sidebar.Header />
 	<Sidebar.Content>
-		<Sidebar.Group />
 		<div
 			bind:this={messagesContainer}
 			onscroll={handleScroll}
@@ -156,15 +136,15 @@
 				{/each}
 			</div>
 		</div>
-
+	</Sidebar.Content>
+	<Sidebar.Footer>
 		{#if !isAtBottom}
-			<div class="fixed bottom-20 flex w-full justify-center">
+			<div class="flex w-full justify-center">
 				<Button onclick={() => scrollToBottom(true)}><ArrowDown /></Button>
 			</div>
 		{/if}
-		<div class="fixed bottom-0 flex w-full justify-center bg-white">
-			<Button onclick={() => account()} />
-			<div class="mb-5 flex w-5/6 gap-2">
+		<div class=" flex w-full justify-center">
+			<div class="flex w-5/6 gap-2">
 				<Input class="flex flex-1" bind:value={message} />
 				{#if message}
 					<Button onclick={() => sendMessage()}><MessageCirclePlus /></Button>
@@ -173,8 +153,5 @@
 				{/if}
 			</div>
 		</div>
-
-		<Sidebar.Group />
-	</Sidebar.Content>
-	<Sidebar.Footer />
+	</Sidebar.Footer>
 </Sidebar.Root>
