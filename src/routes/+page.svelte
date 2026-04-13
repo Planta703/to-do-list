@@ -42,7 +42,7 @@
 	let password = $state('');
 	let currentUserId = $state('');
 	let dashboard = $state(false);
-	let signin = $state(true);
+	let sign_in = $state(true);
 	let error_message = $state('');
 	let email_sent = $state(false);
 	let inputerror = $state('You are not anonymous. Be mindful of what you input.');
@@ -327,7 +327,7 @@
 							{#if error_message}
 								<p class="inline-flex justify-center text-sm text-red-500">{error_message}</p>
 							{/if}
-							{#if signin}
+							{#if sign_in}
 								<Button class="flex place-self-center" type="button" onclick={() => signIn()}>
 									Sign In
 								</Button>
@@ -341,14 +341,14 @@
 					<button
 						class="flex place-self-center"
 						onclick={() => {
-							signin = !signin;
-							if (signin === false) {
+							sign_in = !sign_in;
+							if (sign_in === false) {
 								email_warning = true;
 							}
 						}}
 					>
 						<p class="hover:cursor-pointer">
-							{signin ? "Don't have an account?" : 'Have an account?'}
+							{sign_in ? "Don't have an account?" : 'Have an account?'}
 						</p>
 					</button>
 				{:else}
