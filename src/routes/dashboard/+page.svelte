@@ -1,9 +1,6 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import DropdownMenuContent from '@/components/ui/dropdown-menu/dropdown-menu-content.svelte';
-	import DropdownMenuTrigger from '@/components/ui/dropdown-menu/dropdown-menu-trigger.svelte';
-	import InputGroupAddon from '@/components/ui/input-group/input-group-addon.svelte';
 	import { getLocalTimeZone, today, parseDate } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
@@ -180,21 +177,21 @@
 								bind:value={input_title}
 								maxlength={45}
 							/>
-							<InputGroupAddon align="inline-end">
+							<InputGroup.Addon align="inline-end">
 								<DropdownMenu.Root>
-									<DropdownMenuTrigger>
+									<DropdownMenu.Trigger>
 										<CalendarPlus color="black" />
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content>
 										<Calendar
 											type="single"
 											bind:value
 											class="rounded-md border shadow-sm"
 											captionLayout="dropdown"
 										/>
-									</DropdownMenuContent>
+									</DropdownMenu.Content>
 								</DropdownMenu.Root>
-							</InputGroupAddon>
+							</InputGroup.Addon>
 						</InputGroup.Root>
 					</Field.Field>
 					<Field.Field>
@@ -247,11 +244,11 @@
 					</div>
 					<div class="ml-5 flex shrink-0 gap-5">
 						<DropdownMenu.Root>
-							<DropdownMenuTrigger class="flex gap-1">
+							<DropdownMenu.Trigger class="flex gap-1">
 								{formatDate(item.date)}
 								<ChevronDown color="black" />
-							</DropdownMenuTrigger>
-							<DropdownMenuContent>
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content>
 								<Calendar
 									type="single"
 									value={parseDate(item.date)}
@@ -262,7 +259,7 @@
 									class="rounded-md border shadow-sm"
 									captionLayout="dropdown"
 								/>
-							</DropdownMenuContent>
+							</DropdownMenu.Content>
 						</DropdownMenu.Root>
 						<Trash2 color="black" size="20" onclick={() => deleteItem(item)} />
 					</div>

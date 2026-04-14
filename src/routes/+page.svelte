@@ -1,11 +1,9 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as InputGroup from '$lib/components/ui/input-group/index.js';
-	import InputGroupAddon from '@/components/ui/input-group/input-group-addon.svelte';
 	import { getLocalTimeZone, today } from '@internationalized/date';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import DialogContent from '@/components/ui/dialog/dialog-content.svelte';
 	import * as Field from '$lib/components/ui/field/index.js';
 	import Button from '@/components/ui/button/button.svelte';
 	import Input from '@/components/ui/input/input.svelte';
@@ -292,7 +290,7 @@
 			<Dialog.Trigger class={buttonVariants({ variant: 'default' })} type="button">
 				Sign In!
 			</Dialog.Trigger>
-			<DialogContent>
+			<Dialog.Content>
 				{#if email_warning}
 					<p class="text-center text-3xl">
 						When registering for an account, school emails work but may have a delay before the
@@ -357,7 +355,7 @@
 						>Alright</Button
 					>
 				{/if}
-			</DialogContent>
+			</Dialog.Content>
 		</Dialog.Root>
 	{:else}
 		<Button onclick={() => signOut()}>Sign Out</Button>
@@ -395,7 +393,7 @@
 								maxlength={100}
 							/>
 							{#if dashboard}
-								<InputGroupAddon align="inline-end">
+								<InputGroup.Addon align="inline-end">
 									<DropdownMenu.Root>
 										<DropdownMenu.Trigger>
 											<CalendarPlus color="black" />
@@ -409,7 +407,7 @@
 											/>
 										</DropdownMenu.Content>
 									</DropdownMenu.Root>
-								</InputGroupAddon>
+								</InputGroup.Addon>
 							{/if}
 						</InputGroup.Root>
 					</Field.Field>
