@@ -28,9 +28,11 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { type Database } from '$lib/types/database.types';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
+	import type { User } from '@supabase/supabase-js';
 
 	type Item = Database['public']['Tables']['Items']['Row'];
 
+	let { data } = $props();
 	let email_warning = $state(false);
 	let value = $state(today(getLocalTimeZone()));
 	let list = $state<Item[]>([]); // keep the list as reactive state
@@ -38,8 +40,8 @@
 	let input_text = $state('');
 	let email = $state('');
 	let password = $state('');
-	let currentUserId = $state('');
-	let dashboard = $state(false);
+	let currentUserId = $derived(data.user?.id ?? '');
+	let dashboard = $derived(data.isDashboard);
 	let sign_in = $state(true);
 	let error_message = $state('');
 	let email_sent = $state(false);
@@ -82,17 +84,31 @@
 			})
 	);
 
+	async function dashboardCheck(user: User) {
+		if (user) {
+			const { data: userData } = await supabase
+				.from('users')
+				.select('*')
+				.eq('type', 'dashboard')
+				.eq('user_id', user.id);
+
+			dashboard = !!(userData && userData.length > 0);
+		}
+	}
+
 	supabase.auth.onAuthStateChange((event) => {
 		switch (event) {
 			case 'SIGNED_IN': {
-				userId();
+				supabase.auth.getUser().then(({ data: { user } }) => {
+					currentUserId = user?.id ?? '';
+					dashboardCheck(user!);
+				});
 				loadItems();
 				inputerror = 'You are not anonymous. Be mindful of what you input.';
 				break;
 			}
 			case 'SIGNED_OUT': {
 				currentUserId = '';
-				list = [];
 				dashboard = false;
 				break;
 			}
@@ -103,7 +119,6 @@
 
 	onMount(() => {
 		loadItems();
-		userId();
 
 		const subscription = supabase
 			.channel('public:Items')
@@ -138,21 +153,6 @@
 	async function loadItems() {
 		const { data } = await supabase.from('Items').select('*').eq('deleted', false);
 		list = data ?? [];
-	}
-
-	async function userId() {
-		const { data } = await supabase.auth.getUser();
-		if (data.user) {
-			currentUserId = data.user.id;
-			const { data: userData } = await supabase
-				.from('users')
-				.select('*')
-				.eq('type', 'dashboard')
-				.eq('user_id', currentUserId);
-			if (userData && userData.length > 0) {
-				dashboard = true;
-			}
-		}
 	}
 
 	async function signIn() {
